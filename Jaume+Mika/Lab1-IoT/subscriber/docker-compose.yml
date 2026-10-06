@@ -1,0 +1,48 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    ports:
+      - "1883:1883"
+
+    volumes:
+      - ./mosquitto/config:/mosquitto/config:Z
+      - ./mosquitto/data:/mosquitto/data:Z
+      - ./mosquitto/log:/mosquitto/log:Z
+
+  mysql:
+    image: mysql:8.4
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: lab1
+      MYSQL_USER: lab1_user
+      MYSQL_PASSWORD: lab1_password
+
+    volumes:
+      - ./mysql/data:/var/lib/mysql:Z
+
+  app:
+    build:
+      context: ./app
+    container_name: subscriber-app
+    depends_on:
+      - mysql
+      - mosquitto
+    
+    ports:
+      - "5000:5000"
+
+  apache:
+    image: docker.io/library/httpd:2.4
+    container_name: apache
+    depends_on:
+      - app
+    ports:
+      - "8080:80"
+    volumes:
+      - ../web:/usr/local/apache2/htdocs:Z
+      - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf:Z
