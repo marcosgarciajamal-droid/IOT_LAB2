@@ -7,7 +7,7 @@
 bool LoRaIOT_setup(const LoRaConfig &config)
     {
         // Pines SPI y del módulo LoRa
-        SPI.begin(config.sck_pin, config.miso_pin, config.mosi_pin, config.nss_pin);
+        SPI.begin(SCK_GPIO, MISO_GPIO, MOSI_GPIO, config.nss_pin);
         LoRa.setPins(config.nss_pin, config.rst_pin, config.dio0_pin);
 
         if (!LoRa.begin(config.frequency))
