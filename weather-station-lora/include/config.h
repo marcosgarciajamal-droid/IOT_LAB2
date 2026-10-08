@@ -54,7 +54,7 @@
 
 
 
-
+#define LORA_SEND_INTERVAL_MS 5000      // envío por LoRa cada 5 segundos
 
 
 #endif 
