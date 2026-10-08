@@ -4,12 +4,18 @@
 #include <LoRa.h>
 #include <LoRaConfig.h>
 #include <LoRaDriver.hh>
-
+#include <ArduinoJson.h>
+#include "LoRa_IOT.h"
 #include "config.h"
 #include "wifi_manager.hh"
 #include "MqttPublisher.hh"
 
-WiFiManager wifiManager(WIFI_SSID, WIFI_PASSWORD, WIFI_TIMEOUT_MS, WIFI_RETRY_MS);
+WiFiManager wifiManager(
+    WIFI_SSID,
+    WIFI_PASSWORD,
+    WIFI_TIMEOUT_MS,
+    WIFI_RETRY_MS
+);
 
 WiFiClient espClient;
 MqttPublisher mqttPublisher(espClient);
@@ -17,13 +23,58 @@ MqttPublisher mqttPublisher(espClient);
 unsigned long lastPublish = 0;
 bool mqttStarted = false;
 
+volatile bool rxFlag = false;
 
-bool publishReading(MqttPublisher &publisher,const char *topic, float temperature, float humidity, bool retained = false)
+
+bool publishReading( MqttPublisher &publisher,const char *topic, const String &message, bool retained = false)
 {
+    // Mostrar el mensaje LoRa recibido
+    Serial.print("Message received: ");
+    Serial.println(message);
+
+    // Parsear JSON
+    StaticJsonDocument<200> doc;
+
+    DeserializationError error = deserializeJson(doc, message);
+
+    if (error)
+    {
+        Serial.print("ERROR: JSON parsing failed: ");
+        Serial.println(error.c_str());
+        return false;
+    }
+
+    Serial.println("JSON parsed correctly");
+
+    // Obtener temperatura y humedad
+    float temperature = doc["temperature"];
+    float humidity = doc["humidity"];
+
+    Serial.print("Temperature: ");
+    Serial.println(temperature);
+
+    Serial.print("Humidity: ");
+    Serial.println(humidity);
+
+
     publisher.addField("temp", temperature);
     publisher.addField("hum", humidity);
 
-    return publisher.publish(topic, retained);
+    Serial.println(topic);
+
+    bool result = publisher.publish(topic, retained);
+
+    if (result)
+    {
+        Serial.println("MQTT publish OK");
+    }
+    else
+    {
+        Serial.println("MQTT publish FAILED");
+    }
+
+
+    return result;
 }
 
 
@@ -33,27 +84,29 @@ void setup()
 
     wifiManager.begin();
 
-    // Inicializar LoRa
-    if (!beginLoRa(LoRaConfig())) {
-        Serial.println("Starting LoRa failed!");
+    if (!LoRaIOT_setup(LoRaConfig()))
+    {
+        Serial.println("Starting LoRa failed Version 2!");
         while (1);
     }
-
-    Serial.println("LoRa Receiver");
+    LoRa.receive();
 }
 
 
 void loop()
 {
+    // Actualizar el estado de la conexión WiFi
     wifiManager.update();
 
+    // Si todavía no hay conexión WiFi, no continuamos
     if (!wifiManager.isConnected())
         return;
 
-    // Conectar al broker MQTT
+    // Si todavía no estamos conectados al broker MQTT,
+    // intentamos establecer la conexión
     if (!mqttStarted)
     {
-        mqttStarted = mqttPublisher.begin(MQTT_BROKER_HOST, MQTT_BROKER_PORT, MQTT_CLIENT_ID);
+        mqttStarted = mqttPublisher.begin(MQTT_BROKER_HOST, MQTT_BROKER_PORT, MQTT_CLIENT_ID );
 
         if (mqttStarted)
         {
@@ -61,32 +114,43 @@ void loop()
         }
         else
         {
-            Serial.println("It was not able to connect to the broker MQTT. Next loop");
+            Serial.println(
+                "It was not able to connect to the broker MQTT. Next loop"
+            );
         }
     }
 
+    // Mantener la conexión MQTT activa
     mqttPublisher.loop();
 
-
-    // Comprobar si ha llegado un paquete LoRa
-    int packetSize = LoRa.parsePacket();
-
-    if (packetSize)
+    if (rxFlag)
     {
+        // Limpiar el flag
+        rxFlag = false;
+
         String message = "";
 
-        while (LoRa.available())
+        // Intentar recibir el paquete
+        if (LoRaIOT_receive(message))
         {
-            message += (char)LoRa.read();
+            Serial.println("LoRa message received correctly");
+
+            // Publicar solamente si hemos recibido un mensaje
+            if (mqttStarted)
+            {
+                if (publishReading(mqttPublisher, MQTT_TOPIC, message))
+                {
+                    Serial.println("Published OK");
+                }
+                else
+                {
+                    Serial.println("Error publishing");
+                }
+            }
         }
-
-        Serial.print("Received packet: ");
-        Serial.println(message);
-
-        Serial.print("RSSI: ");
-        Serial.println(LoRa.packetRssi());
-
-        // De momento solo mostramos el mensaje.
-        // Después aquí extraeremos temperatura y humedad.
+        else
+        {
+            Serial.println("LoRa interrupt received, but no packet available");
+        }
     }
 }
