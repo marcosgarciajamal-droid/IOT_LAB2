@@ -30,16 +30,16 @@
 
 #define EU868_FREQUENCY             868000000L      // Hz
 #define BANDWIDTH_250_KHZ           250E3           // Hz; 250 kHz used for LONG_FAST profile
-#define A3MESH_PREAMBLE_LENGTH      0x08            // symbols
-#define A3MESH_SF                   0x07            // [6–12]
-#define A3MESH_CR                   0x01            // 1 = 4/5, 2 = 4/6, 3 = 4/7, 4 = 4/8
-#define A3MESH_SYNC_WORD            0x12            // 0x34 is reserved for LoRaWAN
-#define A3MESH_POWER                0x14            // dBm [2–17]
+#define LORA_PREAMBLE_LENGTH      0x08            // symbols
+#define LORA_SF                   0x07            // [6–12]
+#define LORA_CR                   0x01            // 1 = 4/5, 2 = 4/6, 3 = 4/7, 4 = 4/8
+#define LORA_SYNC_WORD            0x12            // 0x34 is reserved for LoRaWAN
+#define LORA_POWER                0x14            // dBm [2–17]
 #define LORA_MAX_PACKET_SIZE        256
 
 
 // ==========================================
-// === LORA CHIP PINS - SX127x (A3MESH TFG) ==
+// === LORA CHIP PINS - SX1276 (Heltec V2) ==
 // ==========================================
 // Wiring of the ESP32 DevKit board used by the A3MESH firmware (src/a3mesh).
 // The LoRa lab firmware runs on a Heltec V3 and uses the pins declared in the
