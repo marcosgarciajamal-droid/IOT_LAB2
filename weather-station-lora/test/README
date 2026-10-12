@@ -1,11 +1,176 @@
 
-This directory is intended for PlatformIO Test Runner and project tests.
+This directory holds the experiment firmwares of the project. They are not
+PlatformIO unit tests (see `test_ignore` in platformio.ini).
 
-Unit Testing is a software testing method by which individual units of
-source code, sets of one or more MCU program modules together with associated
-control data, usage procedures, and operating procedures, are tested to
-determine whether they are fit for use. Unit testing finds problems early
-in the development cycle.
 
 More information about PlatformIO Unit Testing:
 - https://docs.platformio.org/en/latest/advanced/unit-testing/index.html
+
+
+test_tx_power
+
+Purpose
+-------
+Test for section 5.4 of the assignment: "Changing transmission power to
+evaluate energy consumption and signal strength". It measures how signal
+strength (RSSI) and power consumption change with the LoRa transmission power.
+
+What it does
+------------
+It runs on the TRANSMITTER board. First it initialises LoRa with
+LoRaIOT_setup() and the values in config.h. Then, for each power level in the
+list (2, 5, 8, 11, 14, 17 and 20 dBm):
+
+  1. Sets the power with LoRa.setTxPower().
+  2. Sends 10 packets, 500 ms apart. Each packet is a JSON with the power
+     used and a sequence number:
+         {"test":"tx_power","power":14,"seq":3}
+  3. Measures how long each send takes (time on air) and prints a CSV line:
+         power_dBm,sent,failed,avg_time_on_air_ms
+         14,10,0,30.0
+  4. Waits 3 s before moving to the next power level.
+
+When it finishes, it restores the power from config.h (A3MESH_POWER).
+
+The test PASSES if LoRa initialises correctly and every packet is transmitted.
+
+How to use it
+-------------
+1. RECEIVER board: upload the normal program (env rx) and open its serial
+   monitor. Nothing needs to change; it prints the RSSI of every packet:
+         Received '{"test":"tx_power","power":14,"seq":3}' with RSSI -52
+
+2. TRANSMITTER board: connect it and run the test:
+         pio test -e tx_power
+   (or in VS Code: select env:tx_power in the bottom bar and click the
+    Test button, or PlatformIO icon > tx_power > Advanced > Test)
+
+3. For power consumption, put a USB power meter (or a multimeter in series)
+   on the transmitter's power supply and write down the current for each
+   power level. The 3 s pauses between levels give you time to note it.
+
+How to compute the results
+--------------------------
+- Signal strength: average RSSI per power level (from the receiver's monitor).
+- Energy per packet:   E = V · I · t_air
+      V      = supply voltage (5 V over USB)
+      I      = current measured at that power level
+      t_air  = avg_time_on_air_ms from the CSV
+  The time on air is the same for every power level (it only depends on SF,
+  bandwidth and packet size), so the energy changes only with the current.
+
+Parameters (at the top of test_tx_power/test_tx_power.cpp)
+-----------------------------------------------------------
+  TX_POWERS          power levels to test, in dBm
+  PACKETS_PER_LEVEL  packets per power level (10)
+  PACKET_GAP_MS      pause between packets (500 ms)
+  LEVEL_GAP_MS       pause between power levels (3000 ms)
+
+Notes
+-----
+- During the test the receiver publishes temp=0 and hum=0 to MQTT, because
+  these packets carry no temperature or humidity.
+- At 868 MHz the legal limit is usually 14 dBm. Use 17 and 20 dBm only for
+  the lab test, with the boards close together.
+- Both boards must have the same LoRa settings (frequency, SF, BW, CR and
+  sync word) in config.h.
+
+
+
+
+-----------------------------------------------------------------
+range_speed_balance_bw
+
+"Adjusting the bandwidth and data rate to balance transmission speed and range."
+
+One TX board and one RX board (Heltec WiFi LoRa 32 V2) sweep these LoRa
+configs, CR 4/5 fixed:
+
+    BW {125, 250, 500} kHz  x  SF {7, 9, 12}   ->  9 configs
+
+Both boards sync their clock through WiFi/NTP and switch configs at the same
+time, without any handshake. Each config owns a time window aligned to the
+clock. In that window TX sends 10 packets `{"id":N,"t":"HH:MM:SS.mmm"}`.
+
+The send interval follows the EU868 1% duty cycle (interval = airtime / 0.01,
+5 s minimum), so slow configs take longer:
+
+    BW (kHz)  SF   airtime   interval   window
+    125        7    67 ms      6.7 s     70 s
+    125        9   226 ms     22.6 s    229 s
+    125       12  1647 ms    164.7 s   1650 s
+    250        7    33 ms      5.0 s     53 s
+    250        9   113 ms     11.3 s    116 s
+    250       12   823 ms     82.3 s    826 s
+    500        7    17 ms      5.0 s     53 s
+    500        9    57 ms      5.7 s     60 s
+    500       12   371 ms     37.1 s    374 s
+
+A full cycle takes about 57 min. Both boards print this table at boot.
+
+
+How to use it
+-------------
+
+1. Set `WIFI_SSID` / `WIFI_PASSWORD` in `include/config.h`. Both boards need
+   internet access for NTP.
+2. Flash each board:
+
+       pio run -e range_speed_bw_tx -t upload
+       pio run -e range_speed_bw_rx -t upload
+
+3. Open the serial monitor of both boards (`pio device monitor`, 115200 baud)
+   and save the output, e.g. `pio device monitor | tee rx_10m.log`.
+4. Let it run for at least one full cycle (~57 min). A board started in the
+   middle of a window only sends/expects the remaining slots of that window.
+5. Repeat the cycle at different distances (e.g. 1 m, 10 m, 50 m, through
+   walls...) to see where each config stops receiving.
+
+Parameters (`PACKETS_PER_CONFIG`, `GUARD_MS`, `EXPERIMENT_CONFIGS`, ...) are
+at the top of `range_speed_balance_bw/main.cpp`. Both boards must run the same
+values, or they will not be in the same config at the same time.
+
+
+Output
+------
+
+TX, one line per packet:
+
+    [TX|11:44:30.123] {"id":3,"t":"11:44:30.123"} | airtime 67.9 ms (theory 66.8 ms)
+
+RX, one line per packet and a summary at the end of each window:
+
+    [RX|-80dBm|11:44:30.192] {"id":3,"t":"11:44:30.123"} | SNR 9.5 dB | delta 69 ms (theory 66.8 ms)
+    --- Summary BW 125.0 kHz SF 7 | received 10/10 (loss 0%) | avg RSSI -80.2 dBm | avg SNR 9.4 dB | avg delta 68.7 ms ---
+
+
+How to evaluate the results
+---------------------------
+
+Speed
+  - `airtime` (TX) is the real time-on-air and should be close to `theory`.
+  - `delta` (RX) = t_rx - t_tx. It should match the airtime; the difference is
+    the NTP sync error between both boards (a few ms up to ~20 ms). Fast
+    configs (SF7 / 500 kHz, ~17 ms) are the most affected by that error.
+  - Effective data rate = payload bits / airtime (27 bytes = 216 bits).
+  - Expected trend: doubling BW halves the airtime; each SF step roughly
+    doubles it. SF7/500 kHz is the fastest, SF12/125 kHz the slowest (~100x).
+
+Range
+  - RSSI: received power. Closer to 0 dBm means stronger signal.
+  - SNR: LoRa can decode below the noise floor (negative SNR). The demodulation
+    limit is about -7.5 dB for SF7 and -20 dB for SF12. A larger margin between
+    the measured SNR and that limit means more range left.
+  - Packet loss (summary): the practical range limit is where loss grows.
+  - Expected trend: higher SF and lower BW reach further. Each SF step gives
+    about +2.5 dB of sensitivity and halving BW about +3 dB.
+
+Trade-off
+  - Put every config in a table: airtime, data rate, avg RSSI, avg SNR, loss,
+    one table per distance.
+  - At short distance all configs receive everything, so the fastest one wins.
+    As the distance grows, the fast configs lose packets first. The best
+    balance is the fastest config that still keeps the loss near 0% at the
+    target distance.
+  - Remember the cost of slow configs: with a 1% duty cycle, SF12/125 kHz can
+    send only one packet every ~165 s.
