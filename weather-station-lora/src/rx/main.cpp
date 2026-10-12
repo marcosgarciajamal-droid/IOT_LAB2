@@ -36,8 +36,8 @@ bool publishReading(MqttPublisher &publisher, const char *topic, const String &m
         return false;
     }
 
-    float temperature = doc["temperature"];
-    float humidity = doc["humidity"];
+    float temperature = doc["temp"];
+    float humidity = doc["hum"];
 
     publisher.addField("temp", temperature);
     publisher.addField("hum", humidity);
