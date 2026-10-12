@@ -25,4 +25,4 @@ bool LoRaIOT_send(const String &message);
  */
 bool LoRaIOT_receive(String &message);
 
-#endif // LORA_IOT_H
+#endif // LORA_IOT_Hs

@@ -41,8 +41,8 @@ void loop()
 
         // JSON Messag: {"id":0,"temperature":23.4,"humidity":55.0}
         String message = "{\"id\":" + String(counter) +
-                         ",\"temperature\":" + String(temperature, 1) +
-                         ",\"humidity\":" + String(humidity, 1) + "}";
+                         ",\"temp\":" + String(temperature, 1) +
+                         ",\"hum\":" + String(humidity, 1) + "}";
 
         Serial.print("Sending packet: ");
         Serial.println(message);
