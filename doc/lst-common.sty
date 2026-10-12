@@ -1,0 +1,57 @@
+\ProvidesPackage{lst-common}
+%% defines the common format to all listings
+
+\def\common@fontsize{}
+\DeclareOption{smallsize}{%
+  \def\common@fontsize{\small}    % use the current size of the document
+}
+
+\def\common@indent{1em}
+\DeclareOption{noindent}{%
+  \def\common@indent{0pt}
+}
+
+\DeclareOption*{}
+
+\ProcessOptions\relax
+
+\RequirePackage{listings}
+\RequirePackage{lstautogobble}
+
+\lstdefinestyle{lst-common}{
+  basicstyle=\sffamily\common@fontsize,
+  stringstyle=\ttfamily,
+  xleftmargin=\common@indent,
+  xrightmargin=\common@indent,
+  framexleftmargin=0.3\parindent,
+  keywordstyle={\bfseries},
+  inputencoding=utf8,
+  extendedchars=true,
+  columns=[l]fullflexible,
+  showstringspaces=false,
+  autogobble=true,
+  %texcl=true,
+  literate=%
+  {à}{{\`a}}1%
+  {è}{{\`e}}1%
+  {é}{{\'e}}1%
+  {í}{{\'\i}}1%
+  {ï}{{\"\i}}1%
+  {ò}{{\`o}}{1}%
+  {ó}{{\'o}}1%
+  {ú}{{\'u}}1%
+  {ü}{{\"u}}1%
+  {ç}{{\c{c}}}1%
+  {l·l}{{\l.l}}2%
+  {À}{{\`A}}1%
+  {È}{{\`E}}1%
+  {É}{{\'E}}1%
+  {Í}{{\'I}}1%
+  {Ï}{{\"I}}1%
+  {Ò}{{\`O}}1%
+  {Ó}{{\'O}}1%
+  {Ú}{{\'U}}1%
+  {Ü}{{\"U}}1%
+  {Ç}{{\c{C}}}1%
+  {L·L}{{\L.L}}2,
+}

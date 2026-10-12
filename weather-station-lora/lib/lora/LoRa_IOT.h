@@ -7,21 +7,21 @@
 #include "LoRa_IOT.h"
 
 /**
- * @brief  Inicializa el módulo LoRa con la configuración dada.
- * @return true si el módulo respondió.
+ * @brief Initializes the LoRa module with the given configuration.
+ * @return true if the module responds.
  */
 bool LoRaIOT_setup(const LoRaConfig &config);
 
 /**
- * @brief  Envía un mensaje por LoRa.
- * @return true si se envió correctamente.
+ * @brief Sends a message over LoRa.
+ * @return true if the message was sent successfully.
  */
 bool LoRaIOT_send(const String &message);
 
 /**
- * @brief  Comprueba si ha llegado un paquete y, si es así, lo guarda en message.
- *         Hay que llamarla continuamente desde loop().
- * @return true si se ha recibido un paquete.
+ * @brief Checks whether a packet has arrived and, if so, stores it in message.
+ *        This function should be called continuously from loop().
+ * @return true if a packet has been received.
  */
 bool LoRaIOT_receive(String &message);
 

@@ -1,0 +1,108 @@
+\ProvidesPackage{lst-python}
+\RequirePackageWithOptions{lst-common}
+\RequirePackage{xcolor}
+
+%% package options
+\DeclareOption{inlinebar}{%
+  \lstMakeShortInline[language={mypython},
+                      style=lst-common,
+                      basicstyle=\sffamily]{|}
+}
+
+%\def\python@background{\color{white}}
+\DeclareOption{background}{%
+  \def\python@background{\color{upcblue!8!white}}
+}
+
+\colorlet{python@gray}{black}
+\colorlet{python@green}{black}
+\colorlet{python@lightgreen}{black}
+\colorlet{python@purple}{black}
+\colorlet{python@darkred}{black}
+\colorlet{python@keyword}{black}
+\colorlet{python@emph}{black}
+\colorlet{python@comment}{black}
+\DeclareOption{color}{%
+  \definecolor{python@gray}{gray}{0.6}
+  \definecolor{python@green}{rgb}{0,0.5,0}
+  \definecolor{python@lightgreen}{rgb}{0,0.7,0}
+  \definecolor{python@purple}{rgb}{0.5,0,0.5}
+  \definecolor{python@darkred}{rgb}{0.5,0,0}
+  \definecolor{python@keyword}{rgb}{0,0,1}
+  \colorlet{python@emph}{orange}
+  \colorlet{python@comment}{red}
+}
+
+
+\DeclareOption*{}
+
+
+\ProcessOptions\relax
+
+
+
+%% Entorn python
+\lstdefinelanguage[]{mypython}[]{Python}{
+   stringstyle=\color{python@green},
+   alsoletter={1234567890},
+%   otherkeywords={ \}, \{ },
+   keywordstyle=\color{python@keyword},
+   emph={access,and,as,break,class,continue,def,del,elif,else,%
+         except,exec,finally,for,from,global,if,import,in,is,%
+         lambda,not,or,pass,print,raise,return,try,while,assert},
+   emphstyle=\color{python@emph}\bfseries,
+   emph={[2]self},
+   emphstyle=[2]\color{python@gray},
+   emph={[4]ArithmeticError,AssertionError,AttributeError,BaseException,%
+         DeprecationWarning,EOFError,Ellipsis,EnvironmentError,Exception,%
+         False,FloatingPointError,FutureWarning,GeneratorExit,IOError,%
+         ImportError,ImportWarning,IndentationError,IndexError,KeyError,%
+         KeyboardInterrupt,LookupError,MemoryError,NameError,None,%
+         NotImplemented,NotImplementedError,OSError,OverflowError,%
+         PendingDeprecationWarning,ReferenceError,RuntimeError,RuntimeWarning,%
+         StandardError,StopIteration,SyntaxError,SyntaxWarning,SystemError,%
+         SystemExit,TabError,True,TypeError,UnboundLocalError,UnicodeDecodeError,%
+         UnicodeEncodeError,UnicodeError,UnicodeTranslateError,UnicodeWarning,%
+         UserWarning,ValueError,Warning,ZeroDivisionError,abs,all,any,apply,%
+         basestring,bool,buffer,callable,chr,classmethod,cmp,coerce,compile,%
+         complex,copyright,credits,delattr,dict,dir,divmod,enumerate,eval,%
+         execfile,exit,file,filter,float,frozenset,getattr,globals,hasattr,%
+         hash,help,hex,id,input,int,intern,isinstance,issubclass,iter,len,%
+         license,list,locals,long,map,max,min,object,oct,open,ord,pow,property,%
+         quit,range,raw_input,reduce,reload,repr,reversed,round,set,setattr,%
+         slice,sorted,staticmethod,str,sum,super,tuple,type,unichr,unicode,%
+         vars,xrange,zip},
+    emphstyle=[4]\color{python@purple}\bfseries,
+    morecomment=[s][\color{python@lightgreen}]{"""}{"""},
+    commentstyle=\color{python@comment}\slshape,
+    literate={>>>}{{\textcolor{python@darkred}{\ttfamily\bfseries >\kern-.4ex>\kern-.4ex>}~}}3%
+             {...}{{\textcolor{python@gray}{...}}}3%
+             {à}{{\`a}}1 {è}{{\`e}}1 {é}{{\'e}}1 {í}{{\'\i}}1 {ï}{{\"\i}}1%
+             {ò}{{\`o}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ü}{{\"u}}1%
+             {ç}{{\c{c}}}1 {l·l}{{\l.l}}1%
+             {À}{{\`A}}1 {È}{{\`E}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ï}{{\"I}}1%
+             {Ò}{{\`O}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1 {Ü}{{\"U}}1%
+             {Ç}{{\c{C}}}1 {L·L}{{\L.L}}1,%
+}
+
+\ifx\python@background\undefined
+\newcommand{\inputpython}[1]{
+  \lstinputlisting[style=lst-common,language=mypython]{#1}
+}
+\lstnewenvironment{python}[1][]
+     {\lstset{style=lst-common,
+              language=mypython,
+              #1}}
+     {}
+\else
+\newcommand{\inputpython}[1]{
+  \lstinputlisting[style=lst-common,language=mypython,backgroundcolor=\python@background]{#1}
+}
+\lstnewenvironment{python}[1][]
+     {\lstset{style=lst-common,
+              language=mypython,
+              backgroundcolor=\python@background,
+              #1}}
+     {}
+\fi
+

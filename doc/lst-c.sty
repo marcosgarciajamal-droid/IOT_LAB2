@@ -1,0 +1,27 @@
+\ProvidesPackage{lst-c}
+\RequirePackage{lst-common}
+\RequirePackage{xcolor}
+
+
+%% package options
+
+\DeclareOption{inlinebar}{%
+  \lstMakeShortInline[style=lst-common,language=c]{|}
+}
+
+\def\c@background{\color{upcblue}}
+\DeclareOption{background}{%
+  \def\c@background{\color{upcblue!8!white}}
+}
+
+\lstnewenvironment{langc}
+     {\lstset{style=lst-common,
+              language=c,
+              backgroundcolor=\c@background}}
+     {}
+
+\newcommand{\inputc}[1]{
+  \lstinputlisting[style=lst-common,language=c,backgroundcolor=\c@background]{#1}
+}
+
+\ProcessOptions\relax
