@@ -2,6 +2,16 @@
 
 #include <SPI.h>
 #include <LoRa.h>
+#include "LoRaConfig.h"
+
+
+extern volatile bool rxFlag;
+
+void IRAM_ATTR onLoRaRxIRQ()
+{
+    // La interrupción solo indica que ha llegado un paquete
+    rxFlag = true;
+}
 
 
 bool LoRaIOT_setup(const LoRaConfig &config)
@@ -9,6 +19,10 @@ bool LoRaIOT_setup(const LoRaConfig &config)
         // Pines SPI y del módulo LoRa
         SPI.begin(SCK_GPIO, MISO_GPIO, MOSI_GPIO, config.nss_pin);
         LoRa.setPins(config.nss_pin, config.rst_pin, config.dio0_pin);
+
+
+        attachInterrupt(digitalPinToInterrupt(config.dio0_pin), onLoRaRxIRQ, RISING);
+
 
         if (!LoRa.begin(config.frequency))
             {
@@ -54,5 +68,7 @@ bool LoRaIOT_receive(String &message)
         Serial.print("' with RSSI ");
         Serial.println(LoRa.packetRssi());
 
+
+        LoRa.receive();
         return true;
     }

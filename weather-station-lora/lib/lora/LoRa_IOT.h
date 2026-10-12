@@ -4,6 +4,7 @@
 
 #include <Arduino.h>
 #include "LoRaConfig.h"
+#include "LoRa_IOT.h"
 
 /**
  * @brief  Inicializa el módulo LoRa con la configuración dada.

@@ -41,14 +41,17 @@
 // ==========================================
 // === LORA CHIP PINS - SX1276 (Heltec V2) ==
 // ==========================================
-// Heltec WiFi LoRa 32 V2.
+// Wiring of the ESP32 DevKit board used by the A3MESH firmware (src/a3mesh).
+// The LoRa lab firmware runs on a Heltec V3 and uses the pins declared in the
+// HELTEC WIFI LORA 32 V3 section below instead.
 
-#define SCK_GPIO                    5
+#define SCK_GPIO                    0x05
 #define MISO_GPIO                   19
 #define MOSI_GPIO                   27
-#define NSS_GPIO                    18
-#define RST_GPIO                    14
-#define DIO0_GPIO                   26
+#define NSS_GPIO                    0x12
+#define RST_GPIO                    0x0E
+#define DIO0_GPIO                   0x1A
+
 
 
 #define LORA_SEND_INTERVAL_MS 5000      // envío por LoRa cada 5 segundos
