@@ -47,8 +47,9 @@ How to use it
          Received '{"test":"tx_power","power":14,"seq":3}' with RSSI -52
 
 2. TRANSMITTER board: connect it and run the test:
-         pio test -e tx -f test_tx_power
-   (or in VS Code: PlatformIO icon > tx > Advanced > Test)
+         pio test -e tx_power
+   (or in VS Code: select env:tx_power in the bottom bar and click the
+    Test button, or PlatformIO icon > tx_power > Advanced > Test)
 
 3. For power consumption, put a USB power meter (or a multimeter in series)
    on the transmitter's power supply and write down the current for each
