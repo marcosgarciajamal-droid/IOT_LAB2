@@ -3,6 +3,77 @@ This directory holds the experiment firmwares of the project. They are not
 PlatformIO unit tests (see `test_ignore` in platformio.ini).
 
 
+More information about PlatformIO Unit Testing:
+- https://docs.platformio.org/en/latest/advanced/unit-testing/index.html
+
+
+test_tx_power
+
+Purpose
+-------
+Test for section 5.4 of the assignment: "Changing transmission power to
+evaluate energy consumption and signal strength". It measures how signal
+strength (RSSI) and power consumption change with the LoRa transmission power.
+
+What it does
+------------
+It runs on the TRANSMITTER board. First it initialises LoRa with
+LoRaIOT_setup() and the values in config.h. Then, for each power level in the
+list (2, 5, 8, 11, 14, 17 and 20 dBm):
+
+  1. Sets the power with LoRa.setTxPower().
+  2. Sends 10 packets, 500 ms apart. Each packet is a JSON with the power
+     used and a sequence number:
+         {"test":"tx_power","power":14,"seq":3}
+  3. Measures how long each send takes (time on air) and prints a CSV line:
+         power_dBm,sent,failed,avg_time_on_air_ms
+         14,10,0,30.0
+  4. Waits 3 s before moving to the next power level.
+
+When it finishes, it restores the power from config.h (A3MESH_POWER).
+
+The test PASSES if LoRa initialises correctly and every packet is transmitted.
+
+How to use it
+-------------
+1. RECEIVER board: upload the normal program (env rx) and open its serial
+   monitor. Nothing needs to change; it prints the RSSI of every packet:
+         Received '{"test":"tx_power","power":14,"seq":3}' with RSSI -52
+
+2. TRANSMITTER board: connect it and run the test:
+         pio test -e tx_power
+   (or in VS Code: select env:tx_power in the bottom bar and click the
+    Test button, or PlatformIO icon > tx_power > Advanced > Test)
+
+3. For power consumption, put a USB power meter (or a multimeter in series)
+   on the transmitter's power supply and write down the current for each
+   power level. The 3 s pauses between levels give you time to note it.
+
+How to compute the results
+--------------------------
+- Signal strength: average RSSI per power level (from the receiver's monitor).
+- Energy per packet:   E = V · I · t_air
+      V      = supply voltage (5 V over USB)
+      I      = current measured at that power level
+      t_air  = avg_time_on_air_ms from the CSV
+  The time on air is the same for every power level (it only depends on SF,
+  bandwidth and packet size), so the energy changes only with the current.
+
+Parameters (at the top of test_tx_power/test_tx_power.cpp)
+-----------------------------------------------------------
+  TX_POWERS          power levels to test, in dBm
+  PACKETS_PER_LEVEL  packets per power level (10)
+  PACKET_GAP_MS      pause between packets (500 ms)
+  LEVEL_GAP_MS       pause between power levels (3000 ms)
+
+Notes
+-----
+- During the test the receiver publishes temp=0 and hum=0 to MQTT, because
+  these packets carry no temperature or humidity.
+- At 868 MHz the legal limit is usually 14 dBm. Use 17 and 20 dBm only for
+  the lab test, with the boards close together.
+- Both boards must have the same LoRa settings (frequency, SF, BW, CR and
+  sync word) in config.h.
 
 
 
@@ -98,7 +169,6 @@ PlatformIO unit tests (see `test_ignore` in platformio.ini).
 
 
 range_speed_balance_bw
-======================
 
 "Adjusting the bandwidth and data rate to balance transmission speed and range."
 

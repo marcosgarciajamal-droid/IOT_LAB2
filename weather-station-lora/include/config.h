@@ -39,7 +39,7 @@
 
 
 // ==========================================
-// === LORA CHIP PINS - SX127x (A3MESH TFG) ==
+// === LORA CHIP PINS - SX1276 (Heltec V2) ==
 // ==========================================
 // Wiring of the ESP32 DevKit board used by the A3MESH firmware (src/a3mesh).
 // The LoRa lab firmware runs on a Heltec V3 and uses the pins declared in the
