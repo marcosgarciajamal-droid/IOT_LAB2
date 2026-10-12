@@ -9,14 +9,14 @@ extern volatile bool rxFlag;
 
 void IRAM_ATTR onLoRaRxIRQ()
 {
-    // La interrupción solo indica que ha llegado un paquete
+    // Interruption indicate that a message has arrived
     rxFlag = true;
 }
 
 
 bool LoRaIOT_setup(const LoRaConfig &config)
     {
-        // Pines SPI y del módulo LoRa
+        // Pins SPI and module LoRa
         SPI.begin(SCK_GPIO, MISO_GPIO, MOSI_GPIO, config.nss_pin);
         LoRa.setPins(config.nss_pin, config.rst_pin, config.dio0_pin);
 
@@ -30,7 +30,7 @@ bool LoRaIOT_setup(const LoRaConfig &config)
                 return false;
             }
 
-        // Parámetros de radio
+        // Radio parameters
         LoRa.setSpreadingFactor(config.sf);
         LoRa.setSignalBandwidth(config.bandwidth);
         LoRa.setCodingRate4(config.cr + 4);     // 1 → 4/5, 2 → 4/6...

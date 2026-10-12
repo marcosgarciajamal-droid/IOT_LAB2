@@ -6,7 +6,7 @@
 
 
 DHT dht(DHT_PIN, DHT_TYPE);
-LoRaConfig loraConfig;                  // valores por defecto de config.h
+LoRaConfig loraConfig;                  // default values on config.h
 
 int counter = 0;
 
@@ -34,12 +34,12 @@ void loop()
 
         if (isnan(temperature) || isnan(humidity))
             {
-                Serial.println("Error leyendo el DHT11");
+                Serial.println("Error reading sensor DHT11");
                 delay(2000);
                 return;
             }
 
-        // Mensaje en JSON: {"id":0,"temperature":23.4,"humidity":55.0}
+        // JSON Messag: {"id":0,"temperature":23.4,"humidity":55.0}
         String message = "{\"id\":" + String(counter) +
                          ",\"temperature\":" + String(temperature, 1) +
                          ",\"humidity\":" + String(humidity, 1) + "}";
@@ -49,7 +49,7 @@ void loop()
 
         if (!LoRaIOT_send(message))
             {
-                Serial.println("Error enviando el paquete");
+                Serial.println("Error sending packet");
             }
 
         counter++;

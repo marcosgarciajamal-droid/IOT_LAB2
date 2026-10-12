@@ -20,21 +20,13 @@ WiFiManager wifiManager(
 WiFiClient espClient;
 MqttPublisher mqttPublisher(espClient);
 
-unsigned long lastPublish = 0;
 bool mqttStarted = false;
 
 volatile bool rxFlag = false;
 
-
-bool publishReading( MqttPublisher &publisher,const char *topic, const String &message, bool retained = false)
+bool publishReading(MqttPublisher &publisher, const char *topic, const String &message, bool retained = false)
 {
-    // Mostrar el mensaje LoRa recibido
-    Serial.print("Message received: ");
-    Serial.println(message);
-
-    // Parsear JSON
-    StaticJsonDocument<200> doc;
-
+    StaticJsonDocument<200> doc; // Parse Json
     DeserializationError error = deserializeJson(doc, message);
 
     if (error)
@@ -44,23 +36,11 @@ bool publishReading( MqttPublisher &publisher,const char *topic, const String &m
         return false;
     }
 
-    Serial.println("JSON parsed correctly");
-
-    // Obtener temperatura y humedad
     float temperature = doc["temperature"];
     float humidity = doc["humidity"];
 
-    Serial.print("Temperature: ");
-    Serial.println(temperature);
-
-    Serial.print("Humidity: ");
-    Serial.println(humidity);
-
-
     publisher.addField("temp", temperature);
     publisher.addField("hum", humidity);
-
-    Serial.println(topic);
 
     bool result = publisher.publish(topic, retained);
 
@@ -73,10 +53,8 @@ bool publishReading( MqttPublisher &publisher,const char *topic, const String &m
         Serial.println("MQTT publish FAILED");
     }
 
-
     return result;
 }
-
 
 void setup()
 {
@@ -89,24 +67,24 @@ void setup()
         Serial.println("Starting LoRa failed Version 2!");
         while (1);
     }
+
     LoRa.receive();
 }
 
-
 void loop()
 {
-    // Actualizar el estado de la conexión WiFi
     wifiManager.update();
 
-    // Si todavía no hay conexión WiFi, no continuamos
     if (!wifiManager.isConnected())
         return;
 
-    // Si todavía no estamos conectados al broker MQTT,
-    // intentamos establecer la conexión
     if (!mqttStarted)
     {
-        mqttStarted = mqttPublisher.begin(MQTT_BROKER_HOST, MQTT_BROKER_PORT, MQTT_CLIENT_ID );
+        mqttStarted = mqttPublisher.begin(
+            MQTT_BROKER_HOST,
+            MQTT_BROKER_PORT,
+            MQTT_CLIENT_ID
+        );
 
         if (mqttStarted)
         {
@@ -120,22 +98,15 @@ void loop()
         }
     }
 
-    // Mantener la conexión MQTT activa
     mqttPublisher.loop();
 
     if (rxFlag)
     {
-        // Limpiar el flag
         rxFlag = false;
-
         String message = "";
-
-        // Intentar recibir el paquete
         if (LoRaIOT_receive(message))
         {
             Serial.println("LoRa message received correctly");
-
-            // Publicar solamente si hemos recibido un mensaje
             if (mqttStarted)
             {
                 if (publishReading(mqttPublisher, MQTT_TOPIC, message))
