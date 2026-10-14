@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  14 OCT 2026 19:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.10.14)  14 OCT 2026 23:07
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1054,17 +1054,10 @@ File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10.95> not available
 (Font)              Font shape `T1/lmtt/b/n' tried instead on input line 6.
-)
-\tf@toc=\write5
-\openout5 = `Activity2.toc'.
-
-
-Package pgfplots notification 'compat/show suggested version=true': you might benefit from \pgfplotsset{compat=1.18} (current compat level: 1.17).
-
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 85.
+(Font)              <9> on input line 51.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 85.
+(Font)              <5> on input line 51.
 
 Overfull \hbox (42.37158pt too wide) has occurred while \output is active
  [] 
@@ -1078,7 +1071,7 @@ Package scrlayer-scrpage Warning: \headheight to low.
 (scrlayer-scrpage)                processing, but you should do this yourself,
 (scrlayer-scrpage)                e.g., setting typearea's option
 (scrlayer-scrpage)                `headheight=33.0pt'.
-(scrlayer-scrpage)                I'll also decrease \topmargin on input line 85.
+(scrlayer-scrpage)                I'll also decrease \topmargin on input line 51.
 
 
 Overfull \vbox (16.0pt too high) has occurred while \output is active []
@@ -1086,7 +1079,14 @@ Overfull \vbox (16.0pt too high) has occurred while \output is active []
  [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}
 
 
-]
+])
+\tf@toc=\write5
+\openout5 = `Activity2.toc'.
+
+
+Package pgfplots notification 'compat/show suggested version=true': you might benefit from \pgfplotsset{compat=1.18} (current compat level: 1.17).
+
+[2]
 Underfull \hbox (badness 1902) in paragraph at lines 103--104
 []\T1/lmr/m/n/10.95 The con-fig-u-ra-tion and com-mu-ni-ca-tion logic are sep-a-rated into dif-fer-ent files. The
  []
@@ -1094,7 +1094,7 @@ Underfull \hbox (badness 1902) in paragraph at lines 103--104
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 111.
 (/usr/share/texmf/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [2{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}]
+) [3{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}]
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
 (Font)              Font shape `T1/lmtt/b/n' tried instead on input line 144.
  (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
@@ -1103,7 +1103,7 @@ File: lstlang1.sty 2023/02/27 1.9 listings language file
 File: lstlang1.sty 2023/02/27 1.9 listings language file
 ) (/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2023/02/27 1.9 (Carsten Heinz)
-) [3
+) [4
 pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
@@ -1112,17 +1112,17 @@ l.177 ...ion={Initialisation of the transmitter.}]
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 177.
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <9> not available
 (Font)              Font shape `T1/lmtt/b/n' tried instead on input line 180.
- [4{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}]
+ [5{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}]
 Underfull \hbox (badness 3815) in paragraph at lines 227--228
 [] []\T1/lmss/bx/n/10.95 Transmission.[][] \T1/lmtt/m/n/10.95 LoRaIOT_send() \T1/lmr/m/n/10.95 wraps the three calls of the Ar-duino LoRa li-brary:
  []
 
-[5]
+[6]
 Underfull \hbox (badness 1902) in paragraph at lines 269--270
 []\T1/lmr/m/n/10.95 If the MQTT con-nec-tion has not been es-tab-lished, it is at-tempted again, and
  []
 
-[6]
+[7]
 Overfull \hbox (3.10457pt too wide) in paragraph at lines 329--334
 \T1/lmr/m/n/10.95 The ex-per-i-ment is au-to-mated with a Plat-formIO test, \T1/lmtt/m/n/10.95 test/test_tx_power/test_tx_power.cpp\T1/lmr/m/n/10.95 ,
  []
@@ -1132,14 +1132,14 @@ Underfull \hbox (badness 5924) in paragraph at lines 343--347
 []\T1/lmr/m/n/10.95 For each power level in $\OMS/lmsy/m/n/10.95 f\OT1/lmr/m/n/10.95 2\OML/lmm/m/it/10.95 ; \OT1/lmr/m/n/10.95 5\OML/lmm/m/it/10.95 ; \OT1/lmr/m/n/10.95 8\OML/lmm/m/it/10.95 ; \OT1/lmr/m/n/10.95 11\OML/lmm/m/it/10.95 ; \OT1/lmr/m/n/10.95 14\OML/lmm/m/it/10.95 ; \OT1/lmr/m/n/10.95 17\OML/lmm/m/it/10.95 ; \OT1/lmr/m/n/10.95 20\OMS/lmsy/m/n/10.95 g$ \T1/lmr/m/n/10.95 dBm, it sets the power with
  []
 
-[7{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}] [8]
+[8{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}] [9]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-LaTeX Warning: Citation `sx1276' on page 9 undefined on input line 529.
+LaTeX Warning: Citation `sx1276' on page 10 undefined on input line 529.
 
-[9
+[10
 pdfTeX warning (ext4): destination with the same identifier (name{table.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
@@ -1151,18 +1151,41 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has 
 l.531 
       ]
 
-LaTeX Warning: Citation `sx1276' on page 10 undefined on input line 544.
+LaTeX Warning: Citation `sx1276' on page 11 undefined on input line 544.
 
-[10
+[11
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.564 \subsection
-                 {Discussion of the results}] (/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-pdfdoc.def
+l.568 \end{equation}
+                    ] [12{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathex.enc}]
+Package pgfplots info on input line 642: Using 'lua backend=false' for axis: ymode=log unsupported (yet).
+Package pgfplots info on input line 657: Using 'lua backend=false' for axis: ymode=log unsupported (yet).
+ [13
+pdfTeX warning (ext4): destination with the same identifier (name{table.4}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.693 
+      ] [14
+pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.693 
+      ] [15] [16
+pdfTeX warning (ext4): destination with the same identifier (name{table.5}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.801 N
+       o packet was lost along the corridor (PDR of 100\,\% at every positio...] [17
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.818 
+      ] (/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-pdfdoc.def
 File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
 ) (/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-utf8.def
 File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
-) [11] (./Activity2.aux)
+) [18] (./Activity2.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -1175,18 +1198,18 @@ Package rerunfilecheck Info: File `Activity2.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 46578 strings out of 476047
- 1101440 string characters out of 5792074
+ 46786 strings out of 476047
+ 1104982 string characters out of 5792074
  2128975 words of memory out of 5000000
- 67680 multiletter control sequences out of 15000+600000
- 654253 words of font info for 107 fonts, out of 8000000 for 9000
+ 67840 multiletter control sequences out of 15000+600000
+ 677000 words of font info for 120 fonts, out of 8000000 for 9000
  85 hyphenation exceptions out of 8191
- 140i,29n,135p,10996b,2623s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texmf/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi8.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi9.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri7.pfb></usr/share/texmf/fonts/type1/public/lm/lmri8.pfb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb>
-Output written on Activity2.pdf (11 pages, 437064 bytes).
+ 140i,30n,135p,10996b,2623s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texmf/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmex10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi8.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi9.pfb></usr/share/texmf/fonts/type1/public/lm/lmmib10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri7.pfb></usr/share/texmf/fonts/type1/public/lm/lmri8.pfb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb>
+Output written on Activity2.pdf (18 pages, 516447 bytes).
 PDF statistics:
- 462 PDF objects out of 1000 (max. 8388607)
- 377 compressed objects within 4 object streams
- 132 named destinations out of 1000 (max. 500000)
- 345 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 604 PDF objects out of 1000 (max. 8388607)
+ 497 compressed objects within 5 object streams
+ 168 named destinations out of 1000 (max. 500000)
+ 393 words of extra memory for PDF output out of 10000 (max. 10000000)
 
