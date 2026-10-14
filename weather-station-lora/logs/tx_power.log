@@ -1,0 +1,497 @@
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13132
+load:0x40080400,len:3036
+entry 0x400805e4
+LoRa init OK
+Received '{"test":"tx_power","power":11,"seq":1}' with RSSI -36
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":2}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":3}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":4}' with RSSI -37
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":5}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":6}' with RSSI -36
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":7}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":8}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":9}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":0}' with RSSI -33
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":1}' with RSSI -34
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":2}' with RSSI -34
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":3}' with RSSI -34
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":4}' with RSSI -34
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":5}' with RSSI -34
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":6}' with RSSI -36
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":7}' with RSSI -36
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":8}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":9}' with RSSI -33
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":0}' with RSSI -31
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":1}' with RSSI -30
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":2}' with RSSI -32
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":3}' with RSSI -30
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":4}' with RSSI -30
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":5}' with RSSI -32
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":7}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":8}' with RSSI -30
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":9}' with RSSI -31
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":0}' with RSSI -30
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":1}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":2}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":3}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":4}' with RSSI -30
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":5}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":6}' with RSSI -30
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":7}' with RSSI -30
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":8}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":9}' with RSSI -30
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":0}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":1}' with RSSI -45
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":2}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":3}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":4}' with RSSI -45
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":5}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":6}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":7}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":8}' with RSSI -45
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":9}' with RSSI -43
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":0}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":1}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":2}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":3}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":4}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":5}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":6}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":7}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":8}' with RSSI -43
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":9}' with RSSI -43
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":0}' with RSSI -42
+LoRa message received correctly
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13132
+load:0x40080400,len:3036
+entry 0x400805e4
+LoRa init OK
+LoRa interrupt received, but no packet available
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13132
+load:0x40080400,len:3036
+entry 0x400805e4
+LoRa init OK
+Received '{"test":"tx_power","power":2,"seq":6}' with RSSI -47
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":7}' with RSSI -47
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":8}' with RSSI -56
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":9}' with RSSI -48
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":0}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":1}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":2}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":3}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":4}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":5}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":6}' with RSSI -43
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":7}' with RSSI -43
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":8}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":9}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":0}' with RSSI -37
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":1}' with RSSI -38
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":2}' with RSSI -38
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":3}' with RSSI -38
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":4}' with RSSI -38
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":5}' with RSSI -38
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":6}' with RSSI -38
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":7}' with RSSI -39
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":8}' with RSSI -40
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":9}' with RSSI -39
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":0}' with RSSI -37
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":1}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":2}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":3}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":4}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":5}' with RSSI -34
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":6}' with RSSI -34
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":7}' with RSSI -34
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":8}' with RSSI -37
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":9}' with RSSI -36
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":0}' with RSSI -34
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":1}' with RSSI -33
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":2}' with RSSI -34
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":3}' with RSSI -33
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":4}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":5}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":6}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":7}' with RSSI -34
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":8}' with RSSI -33
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":9}' with RSSI -34
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":0}' with RSSI -31
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":1}' with RSSI -32
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":2}' with RSSI -31
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":3}' with RSSI -31
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":4}' with RSSI -32
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":5}' with RSSI -30
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":6}' with RSSI -32
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":7}' with RSSI -32
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":8}' with RSSI -31
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":9}' with RSSI -31
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":0}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":1}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":2}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":3}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":4}' with RSSI -30
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":5}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":6}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":7}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":8}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":9}' with RSSI -29
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":0}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":1}' with RSSI -45
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":2}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":3}' with RSSI -45
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":4}' with RSSI -48
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":5}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":6}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":7}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":8}' with RSSI -45
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":9}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":0}' with RSSI -45
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":1}' with RSSI -48
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":2}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":3}' with RSSI -47
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":4}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":5}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":6}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":7}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":8}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":9}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":0}' with RSSI -43
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":1}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":2}' with RSSI -41
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":3}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":4}' with RSSI -39
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":5}' with RSSI -41
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":6}' with RSSI -43
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":7}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":8}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":9}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":0}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":1}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":2}' with RSSI -43
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":3}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":4}' with RSSI -42
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":5}' with RSSI -43
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":6}' with RSSI -43
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":7}' with RSSI -41
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":8}' with RSSI -41
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":9}' with RSSI -41
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":0}' with RSSI -38
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":1}' with RSSI -39
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":2}' with RSSI -39
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":3}' with RSSI -38
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":4}' with RSSI -40
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":5}' with RSSI -38
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":6}' with RSSI -40
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":7}' with RSSI -40
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":8}' with RSSI -40
+LoRa message received correctly
+Received '{"test":"tx_power","power":14,"seq":9}' with RSSI -41
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":0}' with RSSI -37
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":1}' with RSSI -37
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":2}' with RSSI -37
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":3}' with RSSI -38
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":4}' with RSSI -37
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":5}' with RSSI -37
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":6}' with RSSI -36
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":7}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":8}' with RSSI -37
+LoRa message received correctly
+Received '{"test":"tx_power","power":17,"seq":9}' with RSSI -39
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":0}' with RSSI -32
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":1}' with RSSI -31
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":2}' with RSSI -33
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":3}' with RSSI -34
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":4}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":5}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":6}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":7}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":8}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":20,"seq":9}' with RSSI -35
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":0}' with RSSI -51
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":1}' with RSSI -50
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":2}' with RSSI -49
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":3}' with RSSI -51
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":4}' with RSSI -53
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":5}' with RSSI -51
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":6}' with RSSI -50
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":7}' with RSSI -51
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":8}' with RSSI -51
+LoRa message received correctly
+Received '{"test":"tx_power","power":2,"seq":9}' with RSSI -51
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":0}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":1}' with RSSI -49
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":2}' with RSSI -47
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":3}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":4}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":5}' with RSSI -48
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":6}' with RSSI -46
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":7}' with RSSI -47
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":8}' with RSSI -48
+LoRa message received correctly
+Received '{"test":"tx_power","power":5,"seq":9}' with RSSI -47
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":0}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":1}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":2}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":3}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":4}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":5}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":6}' with RSSI -45
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":7}' with RSSI -45
+LoRa message received correctly
+Received '{"test":"tx_power","power":8,"seq":8}' with RSSI -45
+LoRa message received correctly
+Received '<V�����nd�u�|T7�p�Y;�Oeux��w�
+4�1�;�%赜��@�#^%Tu�nV[Z$��2\m��n�~N�{�S/�E-F5jf�L��?���Z�"�������`X\g���p7/h�s���{���ie�{H,~���F�$I�H~����k���"�#j`�7�Ҍ�NQi�g4�Z�W�U(G' with RSSI -105
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":0}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":1}' with RSSI -45
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":2}' with RSSI -48
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":3}' with RSSI -43
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":4}' with RSSI -43
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":5}' with RSSI -44
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":6}' with RSSI -45
+LoRa message received correctly
+Received '{"test":"tx_power","power":11,"seq":7}' with RSSI -49
+LoRa message received correctly
