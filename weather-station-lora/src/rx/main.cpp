@@ -3,7 +3,6 @@
 #include <SPI.h>
 #include <LoRa.h>
 #include <LoRaConfig.h>
-#include <LoRaDriver.hh>
 #include <ArduinoJson.h>
 #include "LoRa_IOT.h"
 #include "config.h"
