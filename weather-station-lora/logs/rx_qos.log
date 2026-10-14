@@ -1,0 +1,245 @@
+Received '{"id":12,"temp":24.1,"hum":68.0}' with RSSI -31
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":14,"temp":24.1,"hum":68.0}' with RSSI -32
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":15,"temp":24.1,"hum":68.0}' with RSSI -31
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":16,"temp":24.1,"hum":68.0}' with RSSI -31
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":0,"temp":24.1,"hum":68.0}' with RSSI -31
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":1,"temp":24.1,"hum":67.0}' with RSSI -41
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":2,"temp":24.1,"hum":67.0}' with RSSI -32
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":3,"temp":24.1,"hum":67.0}' with RSSI -31
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":4,"temp":24.1,"hum":67.0}' with RSSI -34
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":5,"temp":24.1,"hum":67.0}' with RSSI -41
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":6,"temp":24.1,"hum":67.0}' with RSSI -45
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":7,"temp":24.1,"hum":67.0}' with RSSI -57
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":0,"temp":24.1,"hum":67.0}' with RSSI -48
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":1,"temp":24.1,"hum":67.0}' with RSSI -46
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":2,"temp":24.1,"hum":66.0}' with RSSI -49
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":3,"temp":24.1,"hum":66.0}' with RSSI -51
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":4,"temp":24.1,"hum":66.0}' with RSSI -53
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":5,"temp":24.1,"hum":66.0}' with RSSI -50
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":6,"temp":24.1,"hum":66.0}' with RSSI -61
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":7,"temp":24.1,"hum":66.0}' with RSSI -60
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":0,"temp":24.1,"hum":66.0}' with RSSI -58
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":1,"temp":24.1,"hum":66.0}' with RSSI -53
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":2,"temp":24.1,"hum":66.0}' with RSSI -62
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":3,"temp":24.1,"hum":67.0}' with RSSI -63
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":4,"temp":24.1,"hum":67.0}' with RSSI -60
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":5,"temp":24.1,"hum":67.0}' with RSSI -64
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":6,"temp":24.1,"hum":67.0}' with RSSI -71
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":7,"temp":24.1,"hum":67.0}' with RSSI -71
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":8,"temp":24.1,"hum":67.0}' with RSSI -67
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":0,"temp":24.1,"hum":67.0}' with RSSI -68
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":1,"temp":24.1,"hum":67.0}' with RSSI -74
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":2,"temp":24.1,"hum":67.0}' with RSSI -62
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":3,"temp":24.1,"hum":67.0}' with RSSI -69
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":4,"temp":24.1,"hum":67.0}' with RSSI -69
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":5,"temp":24.1,"hum":67.0}' with RSSI -73
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":6,"temp":24.3,"hum":68.0}' with RSSI -83
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":7,"temp":24.5,"hum":68.0}' with RSSI -74
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":8,"temp":24.5,"hum":68.0}' with RSSI -84
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":0,"temp":24.5,"hum":67.0}' with RSSI -65
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":1,"temp":24.5,"hum":67.0}' with RSSI -72
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":2,"temp":24.5,"hum":67.0}' with RSSI -72
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":3,"temp":24.5,"hum":67.0}' with RSSI -70
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":4,"temp":24.5,"hum":67.0}' with RSSI -68
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":5,"temp":24.5,"hum":67.0}' with RSSI -73
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":6,"temp":24.5,"hum":67.0}' with RSSI -85
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":7,"temp":24.5,"hum":67.0}' with RSSI -83
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":0,"temp":24.5,"hum":67.0}' with RSSI -69
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":1,"temp":24.5,"hum":67.0}' with RSSI -76
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":2,"temp":24.5,"hum":67.0}' with RSSI -81
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":3,"temp":24.5,"hum":67.0}' with RSSI -93
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":4,"temp":24.5,"hum":67.0}' with RSSI -85
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":5,"temp":24.5,"hum":67.0}' with RSSI -84
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":6,"temp":24.5,"hum":67.0}' with RSSI -88
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":7,"temp":24.6,"hum":67.0}' with RSSI -81
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":8,"temp":24.8,"hum":67.0}' with RSSI -74
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":9,"temp":24.8,"hum":67.0}' with RSSI -83
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":0,"temp":24.8,"hum":67.0}' with RSSI -87
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":1,"temp":24.8,"hum":67.0}' with RSSI -87
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":2,"temp":24.8,"hum":67.0}' with RSSI -88
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":4,"temp":24.7,"hum":66.0}' with RSSI -90
+LoRa message received correctly
+MQTT publish OK
+Published OK
+Received '{"id":5,"temp":24.8,"hum":67.0}' with RSSI -92
+LoRa message received correctly
+MQTT publish OK
+Published OK
+LoRa interrupt received, but no packet available
