@@ -36,7 +36,7 @@ const int NUM_POWERS = sizeof(TX_POWERS) / sizeof(TX_POWERS[0]);
 #define LEVEL_GAP_MS 3000    // pause between power levels (to read the meter)
 
 // LoRa_IOT.cpp uses this flag in its interrupt (in the real firmware it is defined in rx/main.cpp)
-volatile bool rxFlag = false;
+// volatile bool rxFlag = false;
 
 LoRaConfig loraConfig;
 

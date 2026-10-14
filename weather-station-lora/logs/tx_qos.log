@@ -1,0 +1,82 @@
+Sending packet: {"id":12,"temp":24.1,"hum":68.0}
+Sending packet: {"id":13,"temp":24.1,"hum":68.0}
+Sending packet: {"id":14,"temp":24.1,"hum":68.0}
+Sending packet: {"id":15,"temp":24.1,"hum":68.0}
+Sending packet: {"id":16,"temp":24.1,"hum":68.0}
+LoRa Sender
+LoRa init OK
+Sending packet: {"id":0,"temp":24.1,"hum":68.0}
+Sending packet: {"id":1,"temp":24.1,"hum":67.0}
+Sending packet: {"id":2,"temp":24.1,"hum":67.0}
+Sending packet: {"id":3,"temp":24.1,"hum":67.0}
+Sending packet: {"id":4,"temp":24.1,"hum":67.0}
+Sending packet: {"id":5,"temp":24.1,"hum":67.0}
+Sending packet: {"id":6,"temp":24.1,"hum":67.0}
+Sending packet: {"id":7,"temp":24.1,"hum":67.0}
+LoRa Sender
+LoRa init OK
+Sending packet: {"id":0,"temp":24.1,"hum":67.0}
+Sending packet: {"id":1,"temp":24.1,"hum":67.0}
+Sending packet: {"id":2,"temp":24.1,"hum":66.0}
+Sending packet: {"id":3,"temp":24.1,"hum":66.0}
+Sending packet: {"id":4,"temp":24.1,"hum":66.0}
+Sending packet: {"id":5,"temp":24.1,"hum":66.0}
+Sending packet: {"id":6,"temp":24.1,"hum":66.0}
+Sending packet: {"id":7,"temp":24.1,"hum":66.0}
+LoRa Sender
+LoRa init OK
+Sending packet: {"id":0,"temp":24.1,"hum":66.0}
+Sending packet: {"id":1,"temp":24.1,"hum":66.0}
+Sending packet: {"id":2,"temp":24.1,"hum":66.0}
+Sending packet: {"id":3,"temp":24.1,"hum":67.0}
+Sending packet: {"id":4,"temp":24.1,"hum":67.0}
+Sending packet: {"id":5,"temp":24.1,"hum":67.0}
+Sending packet: {"id":6,"temp":24.1,"hum":67.0}
+Sending packet: {"id":7,"temp":24.1,"hum":67.0}
+Sending packet: {"id":8,"temp":24.1,"hum":67.0}
+LoRa Sender
+LoRa init OK
+Sending packet: {"id":0,"temp":24.1,"hum":67.0}
+Sending packet: {"id":1,"temp":24.1,"hum":67.0}
+Sending packet: {"id":2,"temp":24.1,"hum":67.0}
+Sending packet: {"id":3,"temp":24.1,"hum":67.0}
+Sending packet: {"id":4,"temp":24.1,"hum":67.0}
+Sending packet: {"id":5,"temp":24.1,"hum":67.0}
+Sending packet: {"id":6,"temp":24.3,"hum":68.0}
+Sending packet: {"id":7,"temp":24.5,"hum":68.0}
+Sending packet: {"id":8,"temp":24.5,"hum":68.0}
+LoRa Sender
+LoRa init OK
+Sending packet: {"id":0,"temp":24.5,"hum":67.0}
+Sending packet: {"id":1,"temp":24.5,"hum":67.0}
+Sending packet: {"id":2,"temp":24.5,"hum":67.0}
+Sending packet: {"id":3,"temp":24.5,"hum":67.0}
+Sending packet: {"id":4,"temp":24.5,"hum":67.0}
+Sending packet: {"id":5,"temp":24.5,"hum":67.0}
+Sending packet: {"id":6,"temp":24.5,"hum":67.0}
+Sending packet: {"id":7,"temp":24.5,"hum":67.0}
+LoRa Sender
+LoRa init OK
+Sending packet: {"id":0,"temp":24.5,"hum":67.0}
+Sending packet: {"id":1,"temp":24.5,"hum":67.0}
+Sending packet: {"id":2,"temp":24.5,"hum":67.0}
+Sending packet: {"id":3,"temp":24.5,"hum":67.0}
+Sending packet: {"id":4,"temp":24.5,"hum":67.0}
+Sending packet: {"id":5,"temp":24.5,"hum":67.0}
+Sending packet: {"id":6,"temp":24.5,"hum":67.0}
+Sending packet: {"id":7,"temp":24.6,"hum":67.0}
+Sending packet: {"id":8,"temp":24.8,"hum":67.0}
+Sending packet: {"id":9,"temp":24.8,"hum":67.0}
+LoRa Sender
+LoRa init OK
+Sending packet: {"id":0,"temp":24.8,"hum":67.0}
+Sending packet: {"id":1,"temp":24.8,"hum":67.0}
+Sending packet: {"id":2,"temp":24.8,"hum":67.0}
+Sending packet: {"id":3,"temp":24.7,"hum":66.0}
+Sending packet: {"id":4,"temp":24.7,"hum":66.0}
+Sending packet: {"id":5,"temp":24.8,"hum":67.0}
+Sending packet: {"id":6,"temp":24.8,"hum":67.0}
+Sending packet: {"id":7,"temp":24.8,"hum":68.0}
+Sending packet: {"id":8,"temp":24.8,"hum":68.0}
+Sending packet: {"id":9,"temp":24.8,"hum":68.0}
+Sending packet: {"id":10,"temp":24.8,"hum":68.0}
