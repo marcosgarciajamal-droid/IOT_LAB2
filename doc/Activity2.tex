@@ -2,7 +2,6 @@
 \usepackage[background]{lst-shell}
 \usepackage[background]{lst-c}
 \usepackage[background]{lst-python}
-
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -10,6 +9,11 @@
 \usepackage{enumitem}
 \usepackage{float}
 \usepackage{textcomp}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage{booktabs}  
+\usepackage{pgfplots} 
 
 \title{Weather station system}
 \assignatura{Internet of Things Connectivity}
@@ -87,22 +91,25 @@
 This report documents Activity 2 of the Weather station system, which extends the MQTT chain of Activity 1 by introducing a LoRa link between two ESP32 boards: a transmitter (TX) node that reads the DHT11 sensor and sends the data over LoRa, and a receiver (RX) node that forwards what it receives to the Mosquitto broker over MQTT, so that the dashboard remains unchanged.
 
 For this activity, two groups joined forces: Aarón Alcalá and Marcos García on one side, and Jaume Pulido and Mikael Rodríguez on the other. The work was split so that each group programmed one of the two nodes. Jaume and Mikael's group developed the TX node, including the handling of the DHT11 sensor, and Aarón and Marcos's group developed the RX node, where the WiFi connection, the MQTT publication to the Mosquitto broker and the web frontend keep the same idea and structure as in Activity 1.
- 
-% =====================================================================
 
+% =====================================================================
 \section{LoRa Configuration}
+\label{sec:lora-config}
+% ASSIGNED: MIKA
+% =====================================================================
 
 The LoRa communication system enables two ESP32-based boards to exchange sensor information wirelessly. The objective is to provide a long-range communication link suitable for IoT applications while keeping the implementation modular and easy to maintain.
 
 The configuration and communication logic are separated into different files. The \texttt{LoRaConfig.h} file defines the radio configuration structure, while \texttt{config.h} contains the default radio parameters and hardware pin assignments. The \texttt{LoRa\_IOT.h} and \texttt{LoRa\_IOT.cpp} files define the communication interface and its implementation. This separation allows the radio parameters to be modified without changing the application logic.
 
 \subsection{Radio Parameters}
+\label{sec:lora-params}
 
 The radio configuration is centralised in \texttt{config.h} and passed to the initialisation function through the \texttt{LoRaConfig} structure. The main parameters and their design rationale are described below.
 
 \begin{itemize}
     \item \textbf{Frequency (868 MHz):}
-    Selected for operation in the European 868 MHz band, subject to applicable regulations. Both boards must use the same frequency     to communicate.
+    Selected for operation in the European 868 MHz band, subject to applicable regulations. Both boards must use the same frequency to communicate.
 
     \item \textbf{Bandwidth (250 kHz):}
     Provides a relatively high data rate compared with narrower bandwidths, making it suitable for transmitting small sensor
@@ -121,44 +128,17 @@ The radio configuration is centralised in \texttt{config.h} and passed to the in
     Supports packet detection and synchronisation while limiting transmission overhead.
 
     \item \textbf{CRC enabled:}
-    Allows the receiver to detect corrupted packets and identify yransmission errors.
+    Allows the receiver to detect corrupted packets and identify transmission errors.
 \end{itemize}
 
-The transmit power is also configurable. Its final value must bec ompatible with the radio module and comply with the applicable regional regulations.
+The transmit power is also configurable. Its final value must be compatible with the radio module and comply with the applicable regional regulations.
 
-\subsection{Network Compatibility and Interference}
+\subsection{Compatibility, Interference and Software Design}
+\label{sec:lora-software}
 
-Reliable communication requires both ESP32 boards to use compatible radio parameters, including frequency, bandwidth, spreading factor, coding rate, and sync word. Centralising these values ensures consistency and simplifies configuration changes.
+Reliable communication requires both boards to use the same radio parameters (frequency, bandwidth, spreading factor, coding rate and sync word), which is why they are centralised in a single configuration shared by the TX and RX nodes. The sync word reduces the chance of accepting packets from unrelated LoRa networks, but the radio channel is shared, so interference and collisions caused by other devices can still happen. It also provides neither encryption nor sender authentication.
 
-The selected sync word helps distinguish our network from other LoRa networks using different settings. However, LoRa operates over a shared radio channel, meaning that other devices transmitting on the same frequency may still cause interference or packet collisions. Therefore, this configuration reduces the likelihood of accepting packets from unrelated networks but cannot guarantee exclusive communication between our two boards.
-
-Furthermore, the sync word does not provide encryption or sender authentication. Additional security mechanisms would be required if confidentiality or protection against unauthorised transmissions were necessary.
-
-\subsection{Software Design}
-
-The communication software follows a modular design, separating radio configuration from the application that processes sensor data. The public interface provides functions for initialisation, transmission, and reception, while the implementation manages the radio hardware through the Arduino LoRa library.
-
-This approach simplifies integration with the rest of the IoT application and allows the communication layer to be maintained independently. A GPIO interrupt is also configured to signal radio events, keeping the interrupt handler lightweight. In the current implementation, packet reception is handled through polling, while the interrupt flag is not yet integrated into the reception logic.
-
-Overall, the selected configuration establishes a common radio profile for both boards, while the modular software structure
-facilitates maintenance and future adaptation. The final parameters should be validated under the expected operating distances and environmental conditions.
-
-\section{LoRa library}
-\label{sec:lora-lib}
-
-% ASSIGNED: MIKA
-% Files: LoRaIOT.hh / LoRaIOT.cpp / LoRaConfig.h / config.h
-% =====================================================================
-\tcmp{Introducción breve: por qué se encapsula LoRa en una librería propia (\texttt{LoRaIOT}) y qué problema resuelve.}
-
-\subsection{LoRaIOT class (\texttt{LoRaIOT.hh} / \texttt{LoRaIOT.cpp})}
-\tcmp{Interfaz pública, funciones principales (inicialización, envío, recepción), librería base usada.}
-
-\subsection{LoRa parameters (\texttt{LoRaConfig.h})}
-\tcmp{Parámetros configurables: frecuencia, spreading factor, bandwidth, coding rate, potencia de transmisión, sync word\ldots}
-
-\subsection{General configuration (\texttt{config.h})}
-\tcmp{Pines del módulo LoRa, parámetros comunes entre TX y RX, intervalo de envío.}
+On the software side, the design is modular: the radio configuration is kept apart from the application logic, and the public interface offers initialisation, transmission and reception functions built on top of the Arduino LoRa library. A GPIO interrupt is also configured on the radio so that the arrival of a packet can be signalled to the main program without constant polling (see Section~\ref{sec:rx}). The final parameters should be validated at the expected operating distances and environmental conditions (see Section~\ref{sec:experiments}).
 
 % =====================================================================
 \section{TX node (\texttt{src/tx/main.cpp})}
@@ -173,7 +153,7 @@ The program is built with PlatformIO in its own environment (\texttt{env:tx}), w
 
 \subsection{Configuration}
 
-All the parameters are defined in \texttt{include/config.h} and loaded into a \texttt{LoRaConfig} structure (\texttt{lib/lora/LoRaConfig.h}), whose default values come from these macros. Both nodes use the same structure, which guarantees that they share the same radio settings. Table~\ref{tab:lora-config} summarises the values used.
+The radio parameters of the transmitter are the ones described in Section~\ref{sec:lora-params}, loaded from \texttt{include/config.h} into the same \texttt{LoRaConfig} structure used by the receiver. The parameters that are specific to the transmitter are summarised in Table~\ref{tab:lora-config}.
 
 \begin{table}[h]
     \centering
@@ -181,20 +161,11 @@ All the parameters are defined in \texttt{include/config.h} and loaded into a \t
         \toprule
         \textbf{Parameter}        & \textbf{Value} \\
         \midrule
-        Board / radio             & Heltec WiFi LoRa 32 V2 / SX1276 \\
-        Frequency                 & 868~MHz (EU868) \\
-        Bandwidth                 & 250~kHz \\
-        Spreading factor          & 7 \\
-        Coding rate               & 4/5 \\
-        Preamble length           & 8 symbols \\
-        Sync word                 & \texttt{0x12} \\
-        TX power (default)        & 20~dBm \\
-        CRC                       & Enabled \\
         Sensor                    & DHT11 on GPIO~13 \\
         Send interval             & 5~s (\texttt{LORA\_SEND\_INTERVAL\_MS}) \\
         \bottomrule
     \end{tabular}
-    \caption{LoRa and application parameters used by the transmitter.}
+    \caption{Application parameters specific to the transmitter.}
     \label{tab:lora-config}
 \end{table}
 
@@ -251,7 +222,7 @@ void loop(){
 \begin{center}
     \texttt{\{"id":12,"temperature":23.4,"humidity":55.0\}}
 \end{center}
-Values are rounded to one decimal, which matches the resolution of the DHT11. JSON was chosen because the receiver can parse it directly with ArduinoJson and the format is easy to read in the serial monitor. The field \texttt{id} is a counter that increases with every packet; the receiver can use it to detect lost packets by looking for gaps in the sequence. The message is about 43--45~bytes long, far below the 255-byte limit of a LoRa packet. 
+Values are rounded to one decimal, which matches the resolution of the DHT11. JSON was chosen because the receiver can parse it directly with ArduinoJson and the format is easy to read in the serial monitor. The field \texttt{id} is a counter that increases with every packet; the receiver can use it to detect lost packets by looking for gaps in the sequence. The message is about 43--45~bytes long, far below the 255-byte limit of a LoRa packet.
 
 \paragraph{Transmission.} \texttt{LoRaIOT\_send()} wraps the three calls of the Arduino LoRa library: \texttt{beginPacket()}, \texttt{print()} and \texttt{endPacket()}. The last one is blocking: it returns when the radio signals the end of the transmission (\emph{TxDone}), so when \texttt{LoRaIOT\_send()} returns the packet has already been sent.
 
@@ -261,24 +232,21 @@ sampling period (1~s) and keeps the channel occupancy low: with a time on air of
 % =====================================================================
 \section{RX node}
 \label{sec:rx}
-
 % ASSIGNED: MARCOS
-
 % (más adelante se simplificará hacia las partes más básicas)
-
 % =====================================================================
 
 The RX node is the bridge between the LoRa link and the MQTT chain built in Activity 1. Its task is to wait for the packets sent by the TX node, extract the temperature and humidity from them and republish them to the Mosquitto broker, so that the dashboard keeps working exactly as before. The WiFi connection, the MQTT publication and the web frontend follow the same idea and structure as in Activity 1, so the only new element on this node is the LoRa reception.
 
 \subsection{Main program (\texttt{main.cpp})}
 
-The program is built with PlatformIO in its own environment (\texttt{env\:rx}), which compiles only the \texttt{src/rx/} folder through \texttt{build\_src\_filter}. 
+The program is built with PlatformIO in its own environment (\texttt{env:rx}), which compiles only the \texttt{src/rx/} folder through \texttt{build\_src\_filter}.
 
-The \texttt{main.cpp} of the RX node reuses the \texttt{WiFiManager} and \texttt{MqttPublisher} classes of Activity 1 and adds the LoRa functions provided by the library described in Section~\ref{sec:lora-lib}. Besides the WiFi and MQTT objects, the program only needs one extra global variable, \texttt{rxFlag}, a \texttt{volatile bool} that signals that a LoRa packet has arrived.
+The \texttt{main.cpp} of the RX node reuses the \texttt{WiFiManager} and \texttt{MqttPublisher} classes of Activity 1 and adds the LoRa functions provided by the communication library described in Section~\ref{sec:lora-config}. Besides the WiFi and MQTT objects, the program only needs one extra global variable, \texttt{rxFlag}, a \texttt{volatile bool} that signals that a LoRa packet has arrived.
 
-\paragraph{Initialization.} In \texttt{setup()}, the WiFi manager is started as in Activity 1, and the radio is configured through \texttt{LoRaIOT\\\_setup(LoRaConfig())}. This is the same call used by the TX node, so both boards share exactly the same radio configuration (frequency, spreading factor, bandwidth, coding rate, preamble length and sync word); otherwise the receiver would not be able to decode the packets. If the radio fails to start, the program stops, since the node would be useless without it. Finally, \texttt{LoRa.receive()} is called to put the radio in continuous receive mode. This call is essential: after \texttt{LoRa.begin()} the module is not listening by default, so without it no packet would ever be detected and the interrupt described below would never fire.
+\paragraph{Initialization.} In \texttt{setup()}, the WiFi manager is started as in Activity 1, and the radio is configured through \texttt{LoRaIOT\_setup(LoRaConfig())}. This is the same call used by the TX node, so both boards share exactly the same radio configuration (frequency, spreading factor, bandwidth, coding rate, preamble length and sync word); otherwise the receiver would not be able to decode the packets. If the radio fails to start, the program stops, since the node would be useless without it. Finally, \texttt{LoRa.receive()} is called to put the radio in continuous receive mode. This call is essential: after \texttt{LoRa.begin()} the module is not listening by default, so without it no packet would ever be detected and the interrupt described below would never fire.
 
-\paragraph{Interrupt-driven reception.} Instead of repeatedly asking the radio whether a packet has arrived, the RX node relies on a hardware interrupt. An interrupt makes the microcontroller run a function only when a given event happens, which here is the arrival of a packet. During \texttt{LoRaIOT\\\_setup()}, \texttt{attachInterrupt()} associates the DIO0 pin of the LoRa module with the function \texttt{onLoRaRxIRQ()}, which is executed on every rising edge of that pin, i.e.\ when the module signals that a complete packet has been received:
+\paragraph{Interrupt-driven reception.} Instead of repeatedly asking the radio whether a packet has arrived, the RX node relies on a hardware interrupt. An interrupt makes the microcontroller run a function only when a given event happens, which here is the arrival of a packet. During \texttt{LoRaIOT\_setup()}, \texttt{attachInterrupt()} associates the DIO0 pin of the LoRa module with the function \texttt{onLoRaRxIRQ()}, which is executed on every rising edge of that pin, i.e.\ when the module signals that a complete packet has been received:
 
 \begin{lstlisting}[style=arduino]
 extern volatile bool rxFlag;
@@ -290,7 +258,7 @@ void IRAM_ATTR onLoRaRxIRQ()
 }
 \end{lstlisting}
 
-The interrupt routine does nothing but raise the flag, since this kind of routine must be as short as possible. The variable is declared \texttt{volatile} in \texttt{main.cpp} because it is modified from the interrupt and read from \texttt{loop()}, so the compiler must not assume that its value stays unchanged between reads. The library file accesses it through \texttt{extern}, and the \texttt{IRAM\\\_ATTR} attribute keeps the routine in the ESP32 internal RAM so it can run quickly. The heavy work (reading the packet, parsing it and publishing it) is done later in the main loop, outside the interrupt.
+The interrupt routine does nothing but raise the flag, since this kind of routine must be as short as possible. The variable is declared \texttt{volatile} in \texttt{main.cpp} because it is modified from the interrupt and read from \texttt{loop()}, so the compiler must not assume that its value stays unchanged between reads. The library file accesses it through \texttt{extern}, and the \texttt{IRAM\_ATTR} attribute keeps the routine in the ESP32 internal RAM so it can run quickly. The heavy work (reading the packet, parsing it and publishing it) is done later in the main loop, outside the interrupt.
 
 \paragraph{Main loop.} On every iteration, \texttt{loop()} follows these steps:
 
@@ -300,7 +268,7 @@ The interrupt routine does nothing but raise the flag, since this kind of routin
 
     \item If the MQTT connection has not been established, it is attempted again, and \texttt{mqttPublisher.loop()} is called to keep it alive. These steps work exactly as in Activity 1.
 
-    \item If \texttt{rxFlag} is set, it is cleared first and then the packet is read with \texttt{LoRaIOT\\\_receive()}.
+    \item If \texttt{rxFlag} is set, it is cleared first and then the packet is read with \texttt{LoRaIOT\_receive()}.
 
     \item If a packet was read correctly and the MQTT connection is available, the message is handed to \texttt{publishReading()}.
 
@@ -310,8 +278,7 @@ In contrast with Activity 1, the publication is no longer periodic: nothing is s
 
 \paragraph{Packet reception.} The \texttt{LoRaIOT\_receive()} function checks for an incoming packet using \texttt{LoRa.parsePacket()}. If no packet is available, it returns \texttt{false}. Otherwise, it reads the packet byte by byte using \texttt{LoRa.available()} and \texttt{LoRa.read()}, storing the received data in the \texttt{message} string. It then prints the message and its RSSI value, which indicates the received signal strength. Finally, \texttt{LoRa.receive()} puts the radio back into reception mode, and the function returns \texttt{true} to indicate that a packet has been received.
 
-
-\paragraph{From the LoRa message to MQTT.} The message received over LoRa is a JSON string. \texttt{publishReading()} deserializes it with \textit{*ArduinoJson*}, discarding the packet and reporting the error if the parsing fails. Then it extracts only the temperature and the humidity, ignoring the rest of the fields of the received JSON, such as the packet counter \texttt{id}, since that information is not going to be sent over MQTT. Finally, it builds a new JSON with the \texttt{temp} and \texttt{hum} fields through the \texttt{MqttPublisher} and publishes it to the broker:
+\paragraph{From the LoRa message to MQTT.} The message received over LoRa is a JSON string. \texttt{publishReading()} deserializes it with \textit{ArduinoJson}, discarding the packet and reporting the error if the parsing fails. Then it extracts only the temperature and the humidity, ignoring the rest of the fields of the received JSON, such as the packet counter \texttt{id}, since that information is not going to be sent over MQTT. Finally, it builds a new JSON with the \texttt{temp} and \texttt{hum} fields through the \texttt{MqttPublisher} and publishes it to the broker:
 
 \begin{lstlisting}[style=arduino]
 StaticJsonDocument<200> doc;
@@ -336,90 +303,161 @@ The MQTT part of the RX node is the same as in Activity 1. The \texttt{WiFiManag
 
 The frontend does not change either. \texttt{dashboard.py} keeps subscribing to \texttt{sensor/+}, storing the readings in bounded queues and drawing the live charts with Dash and Plotly, as described in Activity 1. Since the RX node publishes the same JSON format and topic, the dashboard cannot tell whether the data comes from a sensor wired to the node or from a remote one over LoRa.
 
-% =======
+% =====================================================================
+
+\providecommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+
+
 
 % =====================================================================
 \section{Experiments}
 \label{sec:experiments}
-% ASSIGNED: JAUME / AARON
-% (preparar el documento de experimentos + redactar esta parte)
 % =====================================================================
+
 \subsection{Transmission power vs.\ energy consumption and signal strength}
 \label{sec:exp-txpower}
 
-The aim of this experiment is to evaluate how the transmission power affects the signal strength at the receiver and the energy that the transmitter needs to send each packet. In a battery-powered sensor node there is a trade-off between both: a higher power gives a stronger and more robust link, but drains the battery faster.
+The aim of this experiment is to evaluate how the transmission power affects
+the signal strength at the receiver and the energy that the transmitter needs
+to send each packet. In a battery-powered sensor node there is a trade-off
+between both: a higher power gives a stronger and more robust link, but
+drains the battery faster.
 
 \subsubsection{Test procedure}
 
-The experiment is automated with a PlatformIO test, \texttt{test/test\_tx\_power/test\_tx\_power.cpp}, written with the Unity framework. It runs on the transmitter board and is launched with its own environment, \texttt{env:tx\_power}, which extends \texttt{env:tx} and only runs this test:
+The experiment is automated with a PlatformIO test,
+\texttt{test/test\_tx\_power/test\_tx\_power.cpp}, written with the Unity
+framework. It runs on the transmitter board and is launched with its own
+environment, \texttt{env:tx\_power}, which extends \texttt{env:tx} and only
+runs this test:
 \begin{center}
     \texttt{pio test -e tx\_power}
 \end{center}
 
 The test performs the following steps:
 \begin{enumerate}
-    \item It initialises the radio with \texttt{LoRaIOT\_setup()} and the same configuration as the normal firmware
-          (Table~\ref{tab:lora-config}). If this fails, the test fails.
-    \item For each power level in $\{2, 5, 8, 11, 14, 17, 20\}$~dBm, it sets the power with \texttt{LoRa.setTxPower()} and sends 10 packets, 500~ms apart. Each packet carries the power used and a sequence number, so the receiver can tell which level it belongs to:
+    \item It initialises the radio with \texttt{LoRaIOT\_setup()} and the same
+          configuration as the normal firmware
+          (SF\,7, 250~kHz bandwidth, coding rate 4/5, 868~MHz). If this fails, the test fails.
+    \item For each power level in $\{2, 5, 8, 11, 14, 17, 20\}$~dBm, it sets
+          the power with \texttt{LoRa.setTxPower()} and sends 10 packets,
+          500~ms apart. Each packet carries the power used and a sequence
+          number, so the receiver can tell which level it belongs to:
           \begin{center}
               \texttt{\{"test":"tx\_power","power":14,"seq":3\}}
           \end{center}
-    \item For each packet it measures the time taken by \texttt{LoRaIOT\_send()}. Since \texttt{endPacket()} blocks until
-          \emph{TxDone}, this is the time on air of the packet plus a small SPI overhead.
-    \item At the end of each level it prints a CSV line with the power, the number of packets sent and failed, and the average time on air, and waits 3~s before the next level.
-    \item Finally, it restores the default power from \texttt{config.h}. The test passes if every packet was transmitted successfully.
+    \item For each packet it measures the time taken by
+          \texttt{LoRaIOT\_send()}. Since \texttt{endPacket()} blocks until
+          \emph{TxDone}, this is the time on air of the packet plus a small
+          SPI overhead.
+    \item At the end of each level it prints a CSV line with the power, the
+          number of packets sent and failed, and the average time on air, and
+          waits 3~s before the next level.
+    \item Finally, it restores the default power from \texttt{config.h}. The
+          test passes if every packet was transmitted successfully.
 \end{enumerate}
 
-The receiver runs its normal firmware (\texttt{env:rx}) without any change. For every packet it prints the payload and its RSSI on the serial monitor, so the RSSI of each power level is obtained from the receiver's log.
+The sweep was repeated continuously, so several sweeps were recorded in a
+single run. The receiver runs its normal firmware (\texttt{env:rx}) without
+any change. For every packet it prints the payload and its RSSI on the serial
+monitor, so the RSSI of each power level is obtained from the receiver's log.
 
-The power consumption cannot be measured from the firmware, so a USB power meter was placed between the power supply and the transmitter. The current was noted during each power level; the 3~s pauses between levels leave time to read it. The energy spent per packet is then
+The power consumption cannot be measured from the firmware, so the transmitter
+was powered from a laboratory power supply at 5~V, and the current shown by
+the supply was recorded on video during the sweep. The reading alternates
+between a low value while the node is idle between packets and a higher value
+while it transmits. The energy spent per packet is then
 \begin{equation}
-    E_{\text{packet}} = V \cdot I_{\text{TX}} \cdot t_{\text{air}},
+    E_{\text{packet}} = V \cdot I \cdot t_{\text{air}},
     \label{eq:energy}
 \end{equation}
-where $V$ is the supply voltage (5~V over USB), $I_{\text{TX}}$ the current measured at that power level and $t_{\text{air}}$ the time on air reported by the test.
+where $V = 5$~V is the supply voltage, $I$ the current during the transmission
+and $t_{\text{air}}$ the time on air reported by the test. Two values are
+given: the energy of the whole board, using the current during the
+transmission, and the energy of the radio alone, using the increase over the
+idle current, $\Delta I = I_{\text{TX}} - I_{\text{idle}}$.
 
-\paragraph{Setup.} \todo{Describe the physical setup: distance between the two boards, indoor/outdoor, line of sight or not, antennas, USB meter model. Add a photo if possible.}
+\paragraph{Setup.} The two Heltec WiFi LoRa 32 V2 boards were placed on a
+table in the laboratory, 1~m apart, with line of sight and their antennas
+connected.
 
 \subsubsection{Expected behaviour}
 \label{sec:exp-toa}
 
-The time on air of a LoRa packet only depends on the spreading factor, the bandwidth, the coding rate, the preamble and the payload length, not on the transmission power. With the parameters of Table~\ref{tab:lora-config}, the symbol time is
+The time on air of a LoRa packet only depends on the spreading factor, the
+bandwidth, the coding rate, the preamble and the payload length, not on the
+transmission power. With the parameters used (SF\,7, 250~kHz bandwidth, coding rate 4/5 and an
+8-symbol preamble), the symbol time is
 \begin{equation}
     T_{\text{sym}} = \frac{2^{SF}}{BW} = \frac{2^{7}}{250\,\text{kHz}} = 0.512~\text{ms},
 \end{equation}
-and, using the formula from the SX1276 datasheet, the 37--38-byte test packets need 68 payload symbols. Adding the preamble ($8 + 4.25$ symbols), the expected time on air is about
+and, using the formula from the SX1276 datasheet, the 37--38-byte test packets
+need 68 payload symbols. Adding the preamble ($8 + 4.25$ symbols), the
+expected time on air is about
 \begin{equation}
     t_{\text{air}} = (12.25 + 68) \cdot 0.512~\text{ms} \approx 41~\text{ms}.
 \end{equation}
-For the 43-byte weather messages of the normal firmware it is about 44~ms. Therefore, the measured time on air should be the same at every power level, and the energy per packet should change only because of the current drawn by the power amplifier. The RSSI is expected to grow roughly 1~dB for every dB of extra transmission power, until the receiver saturates when the boards are very close.
+For the 43-byte weather messages of the normal firmware it is about 44~ms.
+Therefore, the measured time on air should be the same at every power level,
+and the energy per packet should change only because of the current drawn by
+the power amplifier. The RSSI is expected to grow roughly 1~dB for every dB of
+extra transmission power, until the receiver saturates when the boards are
+very close.
 
 \subsubsection{Results}
 
-\todo{Paste the CSV printed by the test and fill in the RSSI (average of the 10 packets of each level, from the receiver log) and the current from the USB meter. Compute the energy with Eq.~\eqref{eq:energy}.}
+The time on air measured by the transmitter was 42.0--42.1~ms for every
+packet, at every power level. Five sweeps were recorded; the receiver was
+restarted once during the second sweep, so the first and second sweeps are
+incomplete. In total, 230 valid packets were received. Table~\ref{tab:rssi}
+gives the RSSI statistics of all the packets received at each level, and
+Table~\ref{tab:energy} the current and energy per packet. The idle current of
+the board was 42~mA.
 
 \begin{table}[h]
     \centering
     \begin{tabular}{@{}cccccc@{}}
         \toprule
-        \textbf{Power}  & \textbf{Received} & \textbf{$t_{\text{air}}$} &
-        \textbf{RSSI}   & \textbf{Current}  & \textbf{Energy/packet} \\
-        (dBm) & (of 10) & (ms) & (dBm) & (mA) & (mJ) \\
+        \textbf{Power} & \textbf{Packets} & \textbf{Mean RSSI} &
+        \textbf{Std.\ dev.} & \textbf{Min} & \textbf{Max} \\
+        (dBm) & & (dBm) & (dB) & (dBm) & (dBm) \\
         \midrule
-        2  & -- & -- & -- & -- & -- \\
-        5  & -- & -- & -- & -- & -- \\
-        8  & -- & -- & -- & -- & -- \\
-        11 & -- & -- & -- & -- & -- \\
-        14 & -- & -- & -- & -- & -- \\
-        17 & -- & -- & -- & -- & -- \\
-        20 & -- & -- & -- & -- & -- \\
+        2  & 30 & $-47.4$ & 2.6 & $-53$ & $-43$ \\
+        5  & 40 & $-44.8$ & 1.9 & $-49$ & $-42$ \\
+        8  & 29 & $-41.3$ & 2.6 & $-45$ & $-37$ \\
+        11 & 37 & $-39.2$ & 4.4 & $-49$ & $-34$ \\
+        14 & 30 & $-35.9$ & 2.6 & $-41$ & $-33$ \\
+        17 & 29 & $-33.0$ & 3.0 & $-39$ & $-29$ \\
+        20 & 30 & $-30.9$ & 2.4 & $-35$ & $-29$ \\
         \bottomrule
     \end{tabular}
-    \caption{Results of the transmission power sweep.}
-    \label{tab:txpower-results}
+    \caption{RSSI at the receiver for each transmission power (all sweeps,
+             only levels with at least 8 packets received).}
+    \label{tab:rssi}
 \end{table}
 
-% Replace the 0 values in the "coordinates" with the measured data.
+\begin{table}[h]
+    \centering
+    \begin{tabular}{@{}cccccc@{}}
+        \toprule
+        \textbf{Power} & $I_{\text{TX}}$ & $\Delta I$ & $t_{\text{air}}$ &
+        \textbf{Energy (board)} & \textbf{Energy (radio)} \\
+        (dBm) & (mA) & (mA) & (ms) & (mJ) & (mJ) \\
+        \midrule
+        2       & 50  & 8   & 42.1 & 10.53 & 1.68 \\
+        5       & 51  & 9   & 42.1 & 10.74 & 1.89 \\
+        8  & 52  & 10  & 42.1 & 10.95 & 2.11 \\
+        11 & 54  & 12  & 42.1 & 11.37 & 2.53 \\
+        14 & 57  & 15  & 42.1 & 12.00 & 3.16 \\
+        17 & 61  & 19  & 42.1 & 12.84 & 4.00 \\
+        20 & 65  & 23  & 42.1 & 13.68 & 4.84 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Current and energy per packet at 5~V ($I_{\text{idle}} = 42$~mA).}
+    \label{tab:energy}
+\end{table}
+
 \begin{figure}[h]
     \centering
     \begin{tikzpicture}
@@ -429,8 +467,15 @@ For the 43-byte weather messages of the normal firmware it is about 44~ms. There
             xtick={2,5,8,11,14,17,20}, grid=major,
             title={Signal strength}
         ]
-            \addplot[mark=*, blue] coordinates {
-                (2,0) (5,0) (8,0) (11,0) (14,0) (17,0) (20,0)
+            \addplot[mark=*, blue, error bars/.cd, y dir=both, y explicit]
+            coordinates {
+                (2,-47.4)  +- (0,2.6)
+                (5,-44.8)  +- (0,1.9)
+                (8,-41.3)  +- (0,2.6)
+                (11,-39.2) +- (0,4.4)
+                (14,-35.9) +- (0,2.6)
+                (17,-33.0) +- (0,3.0)
+                (20,-30.9) +- (0,2.4)
             };
         \end{axis}
     \end{tikzpicture}
@@ -439,30 +484,75 @@ For the 43-byte weather messages of the normal firmware it is about 44~ms. There
         \begin{axis}[
             width=0.48\textwidth, height=5.5cm,
             xlabel={TX power (dBm)}, ylabel={Energy per packet (mJ)},
-            xtick={2,5,8,11,14,17,20}, grid=major,
-            title={Energy consumption}
+            xtick={2,5,8,11,14,17,20}, xmin=0, xmax=22, ymin=0, grid=major,
+            title={Energy consumption},
+            legend style={font=\scriptsize, at={(0.03,0.97)}, anchor=north west}
         ]
             \addplot[mark=square*, red] coordinates {
-                (2,0) (5,0) (8,0) (11,0) (14,0) (17,0) (20,0)
+                (2,10.53) (5,10.74) (8,10.95) (11,11.37) (14,12.00) (17,12.84) (20,13.68)
             };
+            \addlegendentry{Board}
+            \addplot[mark=triangle*, orange] coordinates {
+                (2,1.68) (5,1.89) (8,2.11) (11,2.53) (14,3.16) (17,4.00) (20,4.84)
+            };
+            \addlegendentry{Radio ($\Delta I$)}
         \end{axis}
     \end{tikzpicture}
-    \caption{RSSI at the receiver (left) and energy per packet at the
-             transmitter (right) as a function of the transmission power.}
+    \caption{Mean RSSI at the receiver with its standard deviation (left) and
+             energy per packet at the transmitter (right) as a function of the
+             transmission power.}
     \label{fig:txpower-results}
 \end{figure}
 
 \subsubsection{Discussion}
 
-\paragraph{Time on air.} \todo{Check that $t_{\text{air}}$ is constant for all the power levels and compare it with the expected 41~ms. Explain any difference (SPI overhead, \texttt{millis()} resolution).}
+\paragraph{Time on air.} The measured time on air was 42.0--42.1~ms at every
+power level, as expected, since it does not depend on the transmission power.
+It is about 1~ms longer than the theoretical 41~ms of
+Section~\ref{sec:exp-toa}. This difference comes from the measurement method:
+the time includes writing the payload to the radio over SPI and the delay
+until the \emph{TxDone} interrupt is detected.
 
-\paragraph{Signal strength.} \todo{Comment on how the RSSI changes with the power. Is the relation linear (about 1~dB per dB)? Does it saturate at high power because the boards are close? Were any packets lost at low power?}
+\paragraph{Signal strength.} The RSSI grows almost linearly with the
+transmission power: a linear fit gives a slope of 0.93~dB per dB, very close
+to the ideal 1~dB per dB. Going from 2 to 20~dBm raised the mean RSSI from
+$-47.4$ to $-30.9$~dBm. The spread between sweeps (standard deviation of
+2--4~dB, and up to 10~dB between the means of two sweeps at the same level) is
+larger than the spread within a sweep. This suggests small changes in the
+environment during the test, such as people moving or the boards being
+touched, rather than random noise. No saturation was observed, even at
+20~dBm. Practically no packets were lost: the only gaps in the sequence
+numbers are at 8 and 17~dBm, not at the lowest power, and the incomplete
+first two sweeps are explained by the receiver restart. Even at 2~dBm the RSSI
+($-47.4$~dBm) is far above the sensitivity of the SX1276 for SF\,7 and
+250~kHz in the 868~MHz band, $-120$~dBm according to its datasheet
+(Table~10)~\cite{sx1276}. This is a link margin of more than 70~dB, so at
+1~m every power level gives a reliable link.
 
-\paragraph{Energy consumption.} \todo{Comment on how the current and the energy per packet grow with the power. Which levels are most expensive? How much more energy does 20~dBm need compared with 14~dBm?}
+\paragraph{Energy consumption.} The current during the transmission grows
+with the power, from 50~mA at 2~dBm to 65~mA at 20~dBm, while the idle current stays at 42~mA. Since the time on air is constant, the energy per packet
+follows the current: the radio alone needs 1.7~mJ per packet at 2~dBm and
+4.8~mJ at 20~dBm, about 2.9 times more. Going from 14 to 20~dBm increases it
+by 53\% (from 3.2 to 4.8~mJ) for only about 5~dB more signal. For the whole
+board the difference is smaller (10.5 to 13.7~mJ), because most of the energy
+is consumed by the ESP32, which is active all the time.
 
-\paragraph{Trade-off.} \todo{Conclude which power level is the best choice for this deployment: the lowest one that still gives a reliable link with some margin. Remember that in the EU868 band the legal limit is usually 14~dBm ERP, so 17 and 20~dBm were only used for this lab test.}
+These currents should be read as a trend rather than absolute values. A
+transmission lasts only 42~ms, which is shorter than the refresh time of the
+power supply display, so the value shown is partly averaged with the idle
+current. The SX1276 datasheet gives a supply current of 87~mA at
+17~dBm and 120~mA at 20~dBm for the radio alone (Table~6)~\cite{sx1276}, clearly higher than the
+increase measured here (19 and 23~mA). To measure the real peak current,
+the transmitter should send continuously (no pause between packets), or the
+current should be measured with an oscilloscope and a shunt resistor.
 
-% AAA
+\paragraph{Trade-off.} At the distance used, even the lowest power gives a
+reliable link with a large margin, so increasing the power only spends more
+energy without improving the delivery rate. For a battery-powered node, the
+best choice is the lowest power that keeps a safe margin at the real
+deployment distance. Moreover, in the EU868 band the legal limit is usually
+14~dBm ERP, so 17 and 20~dBm were used only for this laboratory test.
+
 \subsection{Bandwidth and data rate}
 \label{sec:exp-bw}
 
@@ -470,31 +560,30 @@ The aim of this experiment is to quantify the trade-off between transmission spe
 
 \subsubsection{Theoretical background}
 
-LoRa uses chirp spread spectrum modulation: each symbol is a chirp that sweeps the whole bandwidth $BW$ and encodes $SF$ bits. The symbol duration and the nominal bit rate are therefore
+In LoRa chirp spread spectrum modulation, each symbol sweeps the bandwidth $BW$ and carries $SF$ bits:
 \begin{equation}
     T_{\text{sym}} = \frac{2^{SF}}{BW}, \qquad
     R_b = SF \cdot \frac{BW}{2^{SF}} \cdot \frac{4}{4+CR},
     \label{eq:rb}
 \end{equation}
-where $CR = 1$ for a coding rate of 4/5. Doubling $BW$ halves $T_{\text{sym}}$ and doubles $R_b$, whereas each increment of $SF$ doubles $T_{\text{sym}}$ but adds only one bit per symbol. According to the SX1276 datasheet, the time on air of a packet with a payload of $PL$ bytes, explicit header and CRC is
+with $CR = 1$ (4/5). The time on air of a $PL$-byte packet with explicit header and CRC (SX1276 datasheet) is
 \begin{align}
     t_{\text{air}} &= \left(n_{\text{pre}} + 4.25 + n_{\text{pl}}\right) T_{\text{sym}}, \label{eq:toa}\\
     n_{\text{pl}} &= 8 + \max\!\left(\left\lceil \frac{8PL - 4SF + 44}{4\,(SF - 2DE)} \right\rceil (CR+4),\; 0\right), \nonumber
 \end{align}
-where $n_{\text{pre}} = 8$ is the preamble length and $DE = 1$ when the low data rate optimisation (LDRO) is enabled, which the datasheet requires when $T_{\text{sym}} > 16$~ms.
-
-The price of a higher speed is a lower sensitivity, i.e.\ the minimum received power that can still be demodulated:
+where $n_{\text{pre}} = 8$ and $DE = 1$ when the low data rate optimisation (LDRO) is enabled, required for $T_{\text{sym}} > 16$~ms. A higher speed is paid with a lower sensitivity, while the 1\,\% EU868 duty cycle imposes an off-time after each packet:
 \begin{equation}
-    S = -174 + 10\log_{10}(BW) + NF + SNR_{\min} \quad \text{(dBm)},
+    S = -174 + 10\log_{10}(BW) + NF + SNR_{\min} \ \text{(dBm)}, \qquad
+    T_{\text{off}} = 99\,t_{\text{air}},
     \label{eq:sensitivity}
 \end{equation}
-where $NF \approx 6$~dB is the noise figure of the receiver and $SNR_{\min}$ is the demodulation limit, which goes from $-7.5$~dB at SF7 to $-20$~dB at SF12. Hence, every SF step improves the sensitivity by about 2.5~dB and halving $BW$ by 3~dB: SF12/125~kHz ($S \approx -137$~dBm) has an advantage of 18.5~dB over SF7/500~kHz ($S \approx -118.5$~dBm), which is roughly 8 times the free-space range. Finally, the 1\,\% duty cycle of the EU868 sub-band forces the node to stay silent for $99\,t_{\text{air}}$ after each packet, so slow configurations also limit how often a reading can be sent.
+with $NF \approx 6$~dB and $SNR_{\min}$ from $-7.5$~dB (SF7) to $-20$~dB (SF12). Each SF step gains about 2.5~dB and halving $BW$ 3~dB, so SF12/125~kHz ($-137$~dBm) outperforms SF7/500~kHz ($-118.5$~dBm) by 18.5~dB.
 
-\paragraph{Hypothesis.} (i) The measured time on air should follow Eq.~\eqref{eq:toa}: it should halve each time $BW$ doubles and grow by about $3.4\times$ from SF7 to SF9 and $6.5$--$7.3\times$ from SF9 to SF12, so SF12/125~kHz should be about 100 times slower than SF7/500~kHz. (ii) The RSSI depends only on the transmission power and the propagation path, so it should be similar for all the configurations, while the SNR should drop by about 3~dB each time $BW$ doubles, since the noise power is proportional to the bandwidth. (iii) At a short distance every configuration should receive all the packets, so the fastest one would be the best choice; the range advantage of a high SF and a narrow $BW$ would only become visible at longer distances.
+\paragraph{Hypothesis.} (i) $t_{\text{air}}$ follows Eq.~\eqref{eq:toa}: it halves when $BW$ doubles and grows by $3.4\times$ from SF7 to SF9 and $6.5$--$7.3\times$ from SF9 to SF12 (about $100\times$ between both extremes). (ii) The RSSI does not depend on the configuration, whereas the SNR drops by about 3~dB per doubling of $BW$. (iii) At a short distance all configurations deliver every packet, so the fastest one is preferable.
 
 \subsubsection{Experimental setup}
 
-The experiment uses a dedicated firmware (\texttt{test/range\_speed\_balance\_bw}), flashed on one board as transmitter and on the other as receiver. Both boards sweep the nine combinations of $BW \in \{125, 250, 500\}$~kHz and $SF \in \{7, 9, 12\}$, while the rest of the parameters are those of Table~\ref{tab:lora-config}. Two boards with different configurations cannot communicate, so the change of configuration cannot be negotiated over LoRa. Instead, both boards synchronise their clocks through WiFi and NTP at boot, and each configuration is assigned a time window aligned to the wall clock, so both nodes switch at the same instant without any handshake.
+The experiment uses a dedicated firmware (\texttt{test/range\_speed\_balance\_bw}), flashed on one board as transmitter and on the other as receiver. Both boards sweep the nine combinations of $BW \in \{125, 250, 500\}$~kHz and $SF \in \{7, 9, 12\}$. Two boards with different configurations cannot communicate, so the change of configuration cannot be negotiated over LoRa. Instead, both boards synchronise their clocks through WiFi and NTP at boot, and each configuration is assigned a time window aligned to the wall clock, so both nodes switch at the same instant without any handshake.
 
 In each window, the transmitter sends 10 packets that contain a sequence number and the transmission timestamp, e.g.\ \texttt{\{"id":3,"t":"18:40:08.650"\}} (27~bytes). The interval between packets is $t_{\text{air}}/0.01$ (minimum 5~s) to respect the 1\,\% duty cycle, so it ranges from 5~s at SF7/500~kHz to 164.7~s at SF12/125~kHz, and a full cycle takes about 57~min. The following metrics are logged:
 \begin{itemize}[noitemsep]
@@ -614,18 +703,24 @@ The aim of this experiment is to evaluate how the signal strength and the packet
 
 \subsubsection{Theoretical background}
 
-As the radio wave propagates, its power spreads over a larger area and is attenuated by obstacles, so the received power decreases with the distance $d$. This is commonly described by the log-distance path loss model:
+The received power follows the log-distance path loss model, and the link quality is measured by the packet delivery ratio:
 \begin{equation}
-    RSSI(d) = RSSI(d_0) - 10\,n\log_{10}\frac{d}{d_0} + X_\sigma,
+    RSSI(d) = RSSI(d_0) - 10\,n\log_{10}\frac{d}{d_0} + X_\sigma, \qquad
+    PDR = \frac{N_{\text{rx}}}{N_{\text{tx}}},
     \label{eq:pathloss}
 \end{equation}
-where $n$ is the path loss exponent ($n = 2$ in free space and typically 2.7--4 with obstacles) and $X_\sigma$ is a random term of several dB caused by shadowing and multipath fading. A packet can only be decoded while its received power stays above the sensitivity of Eq.~\eqref{eq:sensitivity}, about $-121.5$~dBm for the SF7/250~kHz configuration of the weather station. Close to this limit, the random term makes some packets fall below it, so the packet delivery ratio $PDR = N_{\text{rx}}/N_{\text{tx}}$ drops sharply within a few dB.
+where $n$ is the path loss exponent (2 in free space, 2.7--4 with obstacles) and $X_\sigma$ is a random shadowing and fading term of several dB. A packet is decoded only while its power exceeds $S$ (Eq.~\eqref{eq:sensitivity}, $-121.5$~dBm at SF7/250~kHz), so the PDR drops sharply once the RSSI approaches this limit.
 
-\paragraph{Hypothesis.} With a transmission power of 20~dBm, the link budget is about $20 - (-121.5) \approx 141$~dB, whereas the free-space loss at 65~m and 868~MHz is only about 67.5~dB. Between 1 and 65~m, Eq.~\eqref{eq:pathloss} predicts an RSSI drop of 36~dB ($n = 2$) to 54~dB ($n = 3$). Therefore, the RSSI should decrease logarithmically with the distance but remain far above the sensitivity, so no packet loss is expected at these distances unless obstacles add a significant attenuation.
+\paragraph{Hypothesis.} With $P_{\text{tx}} = 20$~dBm and $f = 868$~MHz:
+\begin{equation}
+    LB = P_{\text{tx}} - S \approx 141~\text{dB} \gg
+    FSPL(65~\text{m}) = 20\log_{10}d + 20\log_{10}f - 147.55 \approx 67.5~\text{dB},
+\end{equation}
+and Eq.~\eqref{eq:pathloss} predicts an RSSI drop of 36~dB ($n = 2$) to 54~dB ($n = 3$) between 1 and 65~m. The RSSI should thus decrease logarithmically but remain far above $S$, with no packet loss unless obstacles add a significant attenuation.
 
 \subsubsection{Experimental setup}
 
-No dedicated firmware was used in this experiment: the boards ran the normal transmitter and receiver firmware (Sections~\ref{sec:tx} and~\ref{sec:rx}) with the configuration of Table~\ref{tab:lora-config}. The receiver was kept at a fixed position, connected to a laptop whose serial monitor logged every received packet together with its RSSI (\texttt{logs/rx\_qos.log}). The transmitter, also connected to a laptop that logged every sent packet (\texttt{logs/tx\_qos.log}), was carried away and stopped at approximately 1, 12, 27, 40, 57 and 65~m, where it kept sending a reading every 5~s. The transmitter was reset at each position, so the incremental \texttt{id} of the messages restarts from 0: lost packets appear as gaps in the received sequence, and comparing both logs gives the number of packets sent and received at each distance.
+No dedicated firmware was used in this experiment: the boards ran the normal transmitter and receiver firmware (Sections~\ref{sec:tx} and~\ref{sec:rx}) with the configuration of Section~\ref{sec:lora-config}. The receiver was kept at a fixed position, connected to a laptop whose serial monitor logged every received packet together with its RSSI (\texttt{logs/rx\_qos.log}). The transmitter, also connected to a laptop that logged every sent packet (\texttt{logs/tx\_qos.log}), was carried away and stopped at approximately 1, 12, 27, 40, 57 and 65~m, where it kept sending a reading every 5~s. The transmitter was reset at each position, so the incremental \texttt{id} of the messages restarts from 0: lost packets appear as gaps in the received sequence, and comparing both logs gives the number of packets sent and received at each distance.
 
 The experiment was performed indoors, on the third floor of the university building. The receiver was placed next to the bathroom door beside the lift, and the transmitter was moved along the corridor up to the window at its end; the distances are approximate positions along this path. Several doors and columns stood between both nodes, so there was no direct line of sight. Between 8 and 10 packets were sent at each position. An additional measurement was taken about 60~m away and one floor below, at the bottom of a staircase, with several walls in between.
 
@@ -711,80 +806,24 @@ and a least-squares fit of the six positions gives $n = 2.2$ with $RSSI(1~\text{
 No packet was lost along the corridor (PDR of 100\,\% at every position), as expected: even the weakest packet ($-93$~dBm at 65~m) kept a margin of about 28~dB over the sensitivity of $-121.5$~dBm. The only loss occurred at the extra position one floor below, where the walls and the floor lowered the average RSSI to $-88.8$~dBm and one of six packets was lost. Since the received packets were still about 30~dB above the sensitivity, this loss is more likely due to a deep fade of that single packet or to interference than to the average path loss, although the small number of packets does not allow a statistically significant PDR estimate.
 
 \subsection{Discussion of the results}
-\tcmp{Análisis conjunto de los resultados.}
-
 % =====================================================================
 \section{Answers to Guiding Questions}
 \label{sec:questions}
-% ASSIGNED: MARCOS / MIKA
+% ASSIGNED: MARCOS / MIKA (answers merged)
 % =====================================================================
-
-%\begin{enumerate}[label=\textbf{Q\arabic*.}, leftmargin=*]
-%    \item \textbf{How does LoRa compare to Wi-Fi and Bluetooth in terms of range and power consumption?}
-%
-%    \textbf{MARCOS:} LoRa trades speed for range and efficiency. Working in the sub-GHz band (868~MHz here) with chirp spread spectrum, it can reach several kilometres with very low power consumption, but it only offers a few kbps (about 11~kbps with our SF7/250~kHz configuration). Wi-Fi offers Mbps but only reaches tens of metres, needs an access point and is power-hungry (an ESP32 draws well over 100~mA while transmitting over Wi-Fi), while Bluetooth/BLE has low consumption but a range of only about 10--100~m. This is why the TX node can send small readings every few seconds without any network infrastructure.
-%
-%    \textbf{MIKA:} \tcmp{Respuesta}
-%
-%    \item \textbf{What are the trade-offs of using lower data rates in LoRa transmission?}
-%
-%    \textbf{MARCOS:} A lower data rate (higher spreading factor or narrower bandwidth) increases the receiver sensitivity, so the link reaches further and tolerates more noise. The price is a longer time on air, which roughly doubles with each step of the spreading factor (about 44~ms for our messages with SF7/250~kHz versus around 2~s with SF12/125~kHz). This means more energy per packet, a higher chance of collisions and fewer messages allowed under the 1\% duty cycle of the EU868 band, together with lower throughput and higher latency.
-%
-%    \textbf{MIKA:} \tcmp{Respuesta}
-%
-%    \item \textbf{How does increasing transmission power affect battery life and interference?}
-%
-%    \textbf{MARCOS:} A higher transmission power makes the power amplifier draw more current (for the SX1276, roughly 30~mA at 13~dBm versus about 120~mA at 20~dBm), so each packet costs more energy and the battery lasts less, while the gain in range is small (about +6~dB is needed to double the free-space distance). It also increases the interference with other devices sharing the ISM band and, if the boards are very close, it can saturate the receiver. The best practice is to use the lowest power that gives a reliable link, as encouraged by the EU868 limit of about 14~dBm ERP (see Section~\ref{sec:exp-txpower}).
-%
-%    \textbf{MIKA:} \tcmp{Respuesta}
-%\end{enumerate}
-%
 
 \begin{enumerate}[label=\textbf{Q\arabic*.}, leftmargin=*]
     \item \textbf{How does LoRa compare to Wi-Fi and Bluetooth in terms of range and power consumption?}
- 
-    \textbf{MARCOS:} LoRa trades speed for range and low consumption. It can reach several kilometres while using very little energy, but it can only send small amounts of data slowly. Wi-Fi is much faster, but its range is limited to a building or a house, it needs an access point and it consumes much more energy. Bluetooth also consumes little, but its range is only a few tens of metres. This is why LoRa fits our case: the TX node only sends a small reading every few seconds and does not need any network infrastructure.
- 
-    \textbf{MIKA:} LoRa provides a significantly greater communication range than Wi-Fi
-and Bluetooth in many practical IoT deployments, often reaching
-hundreds of metres or several kilometres under suitable conditions.
-Wi-Fi and Bluetooth are generally intended for shorter distances,
-although their actual range depends on the hardware and environment.
 
-LoRa is particularly suitable for transmitting small amounts of
-sensor data over long distances while allowing devices to operate
-with low average power consumption. Wi-Fi supports much higher data
-rates but can consume more energy, while Bluetooth generally offers
-lower power consumption for short-range communication, although this
-depends on the Bluetooth version and operating mode.
+    LoRa offers a much longer range than Wi-Fi and Bluetooth, from hundreds of metres to several kilometres under suitable conditions, while keeping a low average power consumption. The price is a low data rate, so it is only suitable for small messages. Wi-Fi is much faster, but it has a shorter range, needs an access point and generally consumes more energy, while Bluetooth also consumes little but only works at short distances (the exact figures depend on the hardware, the Bluetooth version and the environment). LoRa fits our project because the boards only exchange a small sensor reading every few seconds and no network infrastructure is needed.
 
-For our ESP32 project, LoRa is appropriate because the boards only
-need to exchange small sensor measurements periodically, rather than
-transmit large amounts of data. This allows long-range communication
-without requiring the high data rates provided by Wi-Fi.
-
- 
     \item \textbf{What are the trade-offs of using lower data rates in LoRa transmission?}
- 
-    \textbf{MARCOS:} Sending the data more slowly makes the signal easier for the receiver to detect, so the link reaches further and resists noise better. The price is that each message takes longer to send. The radio stays on for more time, so every message costs more energy, there is a higher chance of colliding with other transmissions, and the legal limits on how long a device may transmit allow fewer messages per hour. The data also arrives with more delay.
- 
-    \textbf{MIKA:} Reducing the LoRa data rate generally increases receiver sensitivity and potential communication range, but also increases packet transmission time. This is commonly achieved by increasing the spreading factor or reducing the bandwidth.
 
-Longer transmission times increase the energy required to send each message and occupy the shared radio channel for longer, increasing the possibility of packet collisions. Therefore, a lower data rate does not necessarily result in lower energy consumption per message.
+    Lowering the data rate (by increasing the spreading factor or reducing the bandwidth) makes the signal easier for the receiver to detect, which increases the sensitivity and the potential range. The price is a longer time on air: the radio stays on for longer, so each message costs more energy, the shared channel is occupied for longer and the probability of collisions grows, the regulations allow fewer messages per hour and the data arrives with more delay. Therefore, a lower data rate does not necessarily mean a lower consumption. In our case, SF7 with 250~kHz keeps the transmissions short, which is appropriate for small sensor messages as long as the receiver decodes them reliably; a higher spreading factor would only be needed for more range.
 
-In our configuration, SF7 and a bandwidth of 250~kHz favour shorter transmission times. This is appropriate for small sensor messages, provided that the receiver can decode them reliably. A higher spreading factor could be used if greater range or better sensitivity were required.
- 
     \item \textbf{How does increasing transmission power affect battery life and interference?}
- 
-    \textbf{MARCOS:} A higher transmission power gives a stronger signal, but the radio needs more current to send it, so each message costs more energy and the battery lasts less. In exchange, the extra range is small. A stronger signal also interferes more with other devices using the same frequency band and, if the boards are very close, it can even overload the receiver. For this reason, the best practice is to use the lowest power that still gives a reliable link, which is what the power experiment of Section~\ref{sec:exp-txpower} tries to find.
- 
-    \textbf{MIKA:} Increasing transmission power can improve the received signal strength and extend the potential communication range. However, it also generally increases the energy drawn by the radio during transmission, potentially reducing battery life.
 
-For example, increasing output power from 10~dBm to 17~dBm increases the transmitted radio-frequency power from 10~mW to approximately 50~mW. The battery consumption does not necessarily increase by the same factor, since the radio's efficiency and other power requirements must also be considered.
-
-Higher transmission power can also increase interference for other devices sharing the same or overlapping frequencies. Therefore, the appropriate strategy is to use the minimum power that maintains a reliable connection between the two ESP32 boards.
-
-In our project, RSSI measurements and packet reception tests can help determine whether the selected power provides sufficient reliability without unnecessary energy consumption or interference. The final setting must also comply with the applicable radio regulations.
+    A higher transmission power improves the received signal strength and can extend the range, but the radio draws more current while transmitting, so the battery lasts less (the consumption does not grow in the same proportion as the radiated power, since it also depends on the efficiency of the radio). It also increases the interference with other devices sharing the same frequencies and, if the boards are very close, it can overload the receiver. The best strategy is therefore to use the minimum power that keeps a reliable link, and the final setting must comply with the radio regulations. In our project, the RSSI measurements and the packet reception of the power experiment (Section~\ref{sec:exp-txpower}) help to find it.
 \end{enumerate}
 
 % =====================================================================
