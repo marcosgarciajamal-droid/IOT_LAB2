@@ -21,8 +21,6 @@ MqttPublisher mqttPublisher(espClient);
 
 bool mqttStarted = false;
 
-volatile bool rxFlag = false;
-
 bool publishReading(MqttPublisher &publisher, const char *topic, const String &message, bool retained = false)
 {
     StaticJsonDocument<200> doc; // Parse Json

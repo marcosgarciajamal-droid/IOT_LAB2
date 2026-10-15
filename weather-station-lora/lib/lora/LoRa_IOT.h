@@ -7,6 +7,12 @@
 #include "LoRa_IOT.h"
 
 /**
+ * @brief Set to true by the DIO0 interrupt when a packet arrives.
+ *        The application must reset it after handling the packet.
+ */
+extern volatile bool rxFlag;
+
+/**
  * @brief Initializes the LoRa module with the given configuration.
  * @return true if the module responds.
  */

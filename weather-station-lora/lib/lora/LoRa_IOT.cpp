@@ -5,7 +5,7 @@
 #include "LoRaConfig.h"
 
 
-extern volatile bool rxFlag;
+volatile bool rxFlag = false;
 
 void IRAM_ATTR onLoRaRxIRQ()
 {
