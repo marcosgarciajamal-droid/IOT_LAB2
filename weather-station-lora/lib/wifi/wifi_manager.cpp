@@ -13,7 +13,7 @@ void WiFiManager::goTo(WiFiState newState) {
 
 void WiFiManager::begin() {
   WiFi.mode(WIFI_STA);
-  goTo(WiFiState::DISCONNECTED); // update() se encaencarga de arrancar CONNECTING
+  goTo(WiFiState::DISCONNECTED); // update() handles the starting up of CONNECTING
 }
 
 void WiFiManager::update() {
@@ -22,7 +22,7 @@ void WiFiManager::update() {
   switch (_state) {
 
     case WiFiState::DISCONNECTED:
-      // Si ya pasó el tiempo de espera (o es la primera vez), intenta conectar
+      // If the elapse time is finished (or it's the first time), tries to connect.
       if (_stateStartTime == 0 || elapsed >= _retryMs) {
         Serial.print("Connecting to WiFi: ");
         Serial.println(_ssid);

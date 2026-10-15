@@ -14,8 +14,8 @@ class WiFiManager {
   public:
     WiFiManager(const char* ssid, const char* password, unsigned long timeoutMs, unsigned long retryMs);
 
-    void begin();          // arranca el proceso (pasa a CONNECTING)
-    void update();          // llamar SIEMPRE en loop(), sin delays
+    void begin();          // starts the process (transitions to CONNECTING)
+    void update();          // call ALWAYS in loop(), without delays
     bool isConnected() const;
     WiFiState getState() const;
     IPAddress getIP() const;
