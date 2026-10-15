@@ -68,8 +68,6 @@ const ExperimentConfig EXPERIMENT_CONFIGS[] = {
 };
 const uint8_t NUM_CONFIGS = sizeof(EXPERIMENT_CONFIGS) / sizeof(EXPERIMENT_CONFIGS[0]);
 
-volatile bool rxFlag = false;
-
 WiFiManager wifiManager(WIFI_SSID, WIFI_PASSWORD, WIFI_TIMEOUT_MS, WIFI_RETRY_MS);
 LoRaConfig loraConfig;
 

@@ -3,7 +3,6 @@
 #include <SPI.h>
 #include <LoRa.h>
 #include <LoRaConfig.h>
-#include <LoRaDriver.hh>
 #include <ArduinoJson.h>
 #include "LoRa_IOT.h"
 #include "config.h"
@@ -21,8 +20,6 @@ WiFiClient espClient;
 MqttPublisher mqttPublisher(espClient);
 
 bool mqttStarted = false;
-
-volatile bool rxFlag = false;
 
 bool publishReading(MqttPublisher &publisher, const char *topic, const String &message, bool retained = false)
 {

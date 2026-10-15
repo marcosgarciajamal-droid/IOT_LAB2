@@ -462,13 +462,253 @@ For the 43-byte weather messages of the normal firmware it is about 44~ms. There
 
 \paragraph{Trade-off.} \todo{Conclude which power level is the best choice for this deployment: the lowest one that still gives a reliable link with some margin. Remember that in the EU868 band the legal limit is usually 14~dBm ERP, so 17 and 20~dBm were only used for this lab test.}
 
+% AAA
 \subsection{Bandwidth and data rate}
-% ASSIGNED: JAUME / AARON
-\tcmp{Variación de bandwidth / spreading factor; resultados en tabla o gráfica.}
+\label{sec:exp-bw}
 
+The aim of this experiment is to quantify the trade-off between transmission speed and range when the bandwidth and the spreading factor of the link are changed.
+
+\subsubsection{Theoretical background}
+
+LoRa uses chirp spread spectrum modulation: each symbol is a chirp that sweeps the whole bandwidth $BW$ and encodes $SF$ bits. The symbol duration and the nominal bit rate are therefore
+\begin{equation}
+    T_{\text{sym}} = \frac{2^{SF}}{BW}, \qquad
+    R_b = SF \cdot \frac{BW}{2^{SF}} \cdot \frac{4}{4+CR},
+    \label{eq:rb}
+\end{equation}
+where $CR = 1$ for a coding rate of 4/5. Doubling $BW$ halves $T_{\text{sym}}$ and doubles $R_b$, whereas each increment of $SF$ doubles $T_{\text{sym}}$ but adds only one bit per symbol. According to the SX1276 datasheet, the time on air of a packet with a payload of $PL$ bytes, explicit header and CRC is
+\begin{align}
+    t_{\text{air}} &= \left(n_{\text{pre}} + 4.25 + n_{\text{pl}}\right) T_{\text{sym}}, \label{eq:toa}\\
+    n_{\text{pl}} &= 8 + \max\!\left(\left\lceil \frac{8PL - 4SF + 44}{4\,(SF - 2DE)} \right\rceil (CR+4),\; 0\right), \nonumber
+\end{align}
+where $n_{\text{pre}} = 8$ is the preamble length and $DE = 1$ when the low data rate optimisation (LDRO) is enabled, which the datasheet requires when $T_{\text{sym}} > 16$~ms.
+
+The price of a higher speed is a lower sensitivity, i.e.\ the minimum received power that can still be demodulated:
+\begin{equation}
+    S = -174 + 10\log_{10}(BW) + NF + SNR_{\min} \quad \text{(dBm)},
+    \label{eq:sensitivity}
+\end{equation}
+where $NF \approx 6$~dB is the noise figure of the receiver and $SNR_{\min}$ is the demodulation limit, which goes from $-7.5$~dB at SF7 to $-20$~dB at SF12. Hence, every SF step improves the sensitivity by about 2.5~dB and halving $BW$ by 3~dB: SF12/125~kHz ($S \approx -137$~dBm) has an advantage of 18.5~dB over SF7/500~kHz ($S \approx -118.5$~dBm), which is roughly 8 times the free-space range. Finally, the 1\,\% duty cycle of the EU868 sub-band forces the node to stay silent for $99\,t_{\text{air}}$ after each packet, so slow configurations also limit how often a reading can be sent.
+
+\paragraph{Hypothesis.} (i) The measured time on air should follow Eq.~\eqref{eq:toa}: it should halve each time $BW$ doubles and grow by about $3.4\times$ from SF7 to SF9 and $6.5$--$7.3\times$ from SF9 to SF12, so SF12/125~kHz should be about 100 times slower than SF7/500~kHz. (ii) The RSSI depends only on the transmission power and the propagation path, so it should be similar for all the configurations, while the SNR should drop by about 3~dB each time $BW$ doubles, since the noise power is proportional to the bandwidth. (iii) At a short distance every configuration should receive all the packets, so the fastest one would be the best choice; the range advantage of a high SF and a narrow $BW$ would only become visible at longer distances.
+
+\subsubsection{Experimental setup}
+
+The experiment uses a dedicated firmware (\texttt{test/range\_speed\_balance\_bw}), flashed on one board as transmitter and on the other as receiver. Both boards sweep the nine combinations of $BW \in \{125, 250, 500\}$~kHz and $SF \in \{7, 9, 12\}$, while the rest of the parameters are those of Table~\ref{tab:lora-config}. Two boards with different configurations cannot communicate, so the change of configuration cannot be negotiated over LoRa. Instead, both boards synchronise their clocks through WiFi and NTP at boot, and each configuration is assigned a time window aligned to the wall clock, so both nodes switch at the same instant without any handshake.
+
+In each window, the transmitter sends 10 packets that contain a sequence number and the transmission timestamp, e.g.\ \texttt{\{"id":3,"t":"18:40:08.650"\}} (27~bytes). The interval between packets is $t_{\text{air}}/0.01$ (minimum 5~s) to respect the 1\,\% duty cycle, so it ranges from 5~s at SF7/500~kHz to 164.7~s at SF12/125~kHz, and a full cycle takes about 57~min. The following metrics are logged:
+\begin{itemize}[noitemsep]
+    \item \textbf{TX:} measured time on air (duration of the blocking transmission) and its theoretical value from Eq.~\eqref{eq:toa}.
+    \item \textbf{RX:} RSSI, SNR and $\Delta t = t_{\text{rx}} - t_{\text{tx}}$ of each packet, and the number of packets received per window.
+    \item \textbf{Effective data rate:} $R_{\text{eff}} = 8PL/t_{\text{air}} = 216~\text{bits}/t_{\text{air}}$.
+\end{itemize}
+
+The experiment was performed indoors, in a classroom, with each board connected to a separate laptop and placed on different tables about 5~m apart.
+
+
+\subsubsection{Results}
+
+Table~\ref{tab:bw-results} and Figure~\ref{fig:bw-results} show one complete cycle recorded after both boards were synchronised (90 packets). Earlier partial windows, caused by restarts of the receiver, were discarded.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \setlength{\tabcolsep}{4.5pt}
+    \begin{tabular}{@{}cc rr r r r r r c@{}}
+        \toprule
+        \textbf{BW} & \textbf{SF} & \multicolumn{2}{c}{$\boldsymbol{t_{\text{air}}}$ \textbf{(ms)}} & $\boldsymbol{\Delta t}$ & $\boldsymbol{R_{\text{eff}}}$ & \textbf{Interval} & \textbf{RSSI} & \textbf{SNR} & \textbf{Received} \\
+        \cmidrule(lr){3-4}
+        (kHz) & & Theory & Measured & (ms) & (kbps) & (s) & (dBm) & (dB) & (of 10) \\
+        \midrule
+        125 & 7  & 66.8   & 67.6   & 78.6   & 3.20  & 6.7   & $-49.4$ & 9.9  & 10 \\
+        125 & 9  & 226.3  & 227.1  & 238.3  & 0.95  & 22.6  & $-51.9$ & 12.7 & 10 \\
+        125 & 12 & 1646.6 & 1647.4 & 1716.7 & 0.13  & 164.7 & $-46.9$ & 9.1  & 10 \\
+        \midrule
+        250 & 7  & 33.4   & 34.2   & 64.2   & 6.32  & 5.0   & $-43.6$ & 10.1 & 10 \\
+        250 & 9  & 113.2  & 114.0  & 144.1  & 1.89  & 11.3  & $-49.5$ & 11.9 & 10 \\
+        250 & 12 & 823.3$^{*}$ & 742.2 & 779.1 & 0.29 & 82.3 & $-47.3$ & 9.9  & 10 \\
+        \midrule
+        500 & 7  & 16.7   & 17.5   & 34.4   & 12.34 & 5.0   & $-40.3$ & 5.5  & 10 \\
+        500 & 9  & 56.6   & 57.4   & 74.0   & 3.76  & 5.7   & $-46.4$ & 7.8  & 10 \\
+        500 & 12 & 370.7  & 371.5  & 392.0  & 0.58  & 37.1  & $-47.8$ & 7.4  & 10 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Results of the bandwidth and spreading factor sweep (averages of 10 packets). $^{*}$Computed with LDRO enabled; with $DE = 0$, Eq.~\eqref{eq:toa} gives 741.4~ms.}
+    \label{tab:bw-results}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \pgfplotsset{
+        bwplot/.style={
+            width=0.48\textwidth, height=5.2cm,
+            xlabel={Spreading factor}, xtick={7,9,12},
+            xmin=6.5, xmax=12.5, grid=major,
+            legend style={font=\scriptsize}, legend cell align=left,
+        },
+    }
+    \begin{tikzpicture}
+        \begin{axis}[bwplot, ymode=log, ylabel={Time (ms)},
+                     title={(a) Time on air and $\Delta t$}, legend pos=north west]
+            \addplot[mark=*, blue] coordinates {(7,67.6) (9,227.1) (12,1647.4)};
+            \addlegendentry{125 kHz}
+            \addplot[mark=square*, red] coordinates {(7,34.2) (9,114.0) (12,742.2)};
+            \addlegendentry{250 kHz}
+            \addplot[mark=triangle*, green!50!black] coordinates {(7,17.5) (9,57.4) (12,371.5)};
+            \addlegendentry{500 kHz}
+            \addplot[mark=o, blue, dashed] coordinates {(7,78.6) (9,238.3) (12,1716.7)};
+            \addplot[mark=square, red, dashed] coordinates {(7,64.2) (9,144.1) (12,779.1)};
+            \addplot[mark=triangle, green!50!black, dashed] coordinates {(7,34.4) (9,74.0) (12,392.0)};
+        \end{axis}
+    \end{tikzpicture}
+    \hfill
+    \begin{tikzpicture}
+        \begin{axis}[bwplot, ymode=log, ylabel={$R_{\text{eff}}$ (kbps)},
+                     title={(b) Effective data rate}]
+            \addplot[mark=*, blue] coordinates {(7,3.20) (9,0.951) (12,0.131)};
+            \addplot[mark=square*, red] coordinates {(7,6.32) (9,1.89) (12,0.291)};
+            \addplot[mark=triangle*, green!50!black] coordinates {(7,12.34) (9,3.76) (12,0.581)};
+        \end{axis}
+    \end{tikzpicture}
+
+    \medskip
+    \begin{tikzpicture}
+        \begin{axis}[bwplot, ylabel={RSSI (dBm)}, ymin=-60, ymax=-30,
+                     title={(c) Average RSSI}]
+            \addplot[mark=*, blue] coordinates {(7,-49.4) (9,-51.9) (12,-46.9)};
+            \addplot[mark=square*, red] coordinates {(7,-43.6) (9,-49.5) (12,-47.3)};
+            \addplot[mark=triangle*, green!50!black] coordinates {(7,-40.3) (9,-46.4) (12,-47.8)};
+        \end{axis}
+    \end{tikzpicture}
+    \hfill
+    \begin{tikzpicture}
+        \begin{axis}[bwplot, ylabel={SNR (dB)}, ymin=-25, ymax=20,
+                     title={(d) Average SNR}]
+            \addplot[mark=*, blue] coordinates {(7,9.9) (9,12.7) (12,9.1)};
+            \addplot[mark=square*, red] coordinates {(7,10.1) (9,11.9) (12,9.9)};
+            \addplot[mark=triangle*, green!50!black] coordinates {(7,5.5) (9,7.8) (12,7.4)};
+            \addplot[black, dashed, mark=none] coordinates {(7,-7.5) (9,-12.5) (12,-20)}
+                node[pos=0.5, anchor=south west, font=\scriptsize] {$SNR_{\min}$};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Results of the bandwidth and spreading factor sweep. In (a), solid lines are the time on air measured at the transmitter and dashed lines the $\Delta t$ measured at the receiver. In (d), the dashed black line is the demodulation limit $SNR_{\min}$.}
+    \label{fig:bw-results}
+\end{figure}
+
+\paragraph{Reliability.} All 90 packets were received, so at this distance none of the configurations reached its range limit, and the range side of the trade-off can only be assessed through the SNR margin. Packets from other groups' nodes with the same radio settings were also decoded during the experiment; they were discarded because they did not carry a valid timestamp, which confirms that the sync word does not isolate the network.
+
+\paragraph{Speed.} The measured time on air matches Eq.~\eqref{eq:toa} with a constant overhead of 0.8~ms and follows the expected trends: doubling $BW$ halves it, and the SF7$\to$SF9 and SF9$\to$SF12 steps multiply it by 3.3 and 6.5--7.3, respectively. The effective data rate ranges from 12.3~kbps (SF7/500~kHz) to 0.13~kbps (SF12/125~kHz), a factor of 94, and is about half of $R_b$ because the preamble and the header weigh a lot in a 27-byte packet. The only exception is SF12/250~kHz, measured at 742.2~ms instead of 823.3~ms. Although $T_{\text{sym}} = 16.4$~ms exceeds 16~ms, the Arduino LoRa library computes the symbol duration with an integer division ($1000/(250000/4096) = 16$~ms) and does not enable LDRO; with $DE = 0$, Eq.~\eqref{eq:toa} gives 741.4~ms, which matches the measurement. The link still works because both boards use the same library, but this setting departs from the datasheet recommendation.
+
+\paragraph{Latency.} $\Delta t$ is 11--69~ms longer than $t_{\text{air}}$. Most of this difference does not come from the link but from the offset between the clocks of both boards, which are only synchronised at boot and drift apart by about 0.8~ms/min (13~ppm): for SF9/125~kHz, $\Delta t$ was 283~ms at the start of the session and 238~ms one hour later. The SF12 configurations show an additional delay of about $0.75\,T_{\text{sym}}$ (25, 13 and 6~ms at 125, 250 and 500~kHz), probably due to the demodulation latency of the receiver. Therefore, the time on air measured at the transmitter is the reliable speed metric.
+
+\paragraph{Link quality.} The RSSI stays between $-40$ and $-52$~dBm in all the configurations, without any trend with $BW$ or $SF$, as expected; the variations of a few dB are caused by multipath and people moving around the boards. The reported SNR (5--13~dB) is far below the $\approx 70$~dB expected from the RSSI and the thermal noise floor, which indicates that the SNR estimate of the SX1276 saturates for strong signals. Even so, the 500~kHz configurations show 2.5--4.6~dB less SNR than the 250~kHz ones, consistent with a noise power proportional to $BW$. The margin over the demodulation limit (Figure~\ref{fig:bw-results}d) grows with SF, from 13--18~dB at SF7 to 27--30~dB at SF12, which reflects the larger range of the slow configurations.
+
+\paragraph{Trade-off.} At this distance, SF7/500~kHz is the best option, since it is the fastest and loses no packets. SF7/250~kHz, used by the weather station, doubles the time on air but gains 3~dB of sensitivity, a reasonable balance for a reading every 5~s. The SF12 configurations are only worth it for long links, since the duty cycle limits them to one packet every 37--165~s.
+
+
+% AAA
 \subsection{Quality of Service: packet loss vs.\ distance}
-% ASSIGNED: JAUME / AARON
-\tcmp{Medida de pérdida de paquetes a distintas distancias; resultados.}
+\label{sec:exp-qos}
+
+The aim of this experiment is to evaluate how the signal strength and the packet delivery degrade as the distance between both nodes increases.
+
+\subsubsection{Theoretical background}
+
+As the radio wave propagates, its power spreads over a larger area and is attenuated by obstacles, so the received power decreases with the distance $d$. This is commonly described by the log-distance path loss model:
+\begin{equation}
+    RSSI(d) = RSSI(d_0) - 10\,n\log_{10}\frac{d}{d_0} + X_\sigma,
+    \label{eq:pathloss}
+\end{equation}
+where $n$ is the path loss exponent ($n = 2$ in free space and typically 2.7--4 with obstacles) and $X_\sigma$ is a random term of several dB caused by shadowing and multipath fading. A packet can only be decoded while its received power stays above the sensitivity of Eq.~\eqref{eq:sensitivity}, about $-121.5$~dBm for the SF7/250~kHz configuration of the weather station. Close to this limit, the random term makes some packets fall below it, so the packet delivery ratio $PDR = N_{\text{rx}}/N_{\text{tx}}$ drops sharply within a few dB.
+
+\paragraph{Hypothesis.} With a transmission power of 20~dBm, the link budget is about $20 - (-121.5) \approx 141$~dB, whereas the free-space loss at 65~m and 868~MHz is only about 67.5~dB. Between 1 and 65~m, Eq.~\eqref{eq:pathloss} predicts an RSSI drop of 36~dB ($n = 2$) to 54~dB ($n = 3$). Therefore, the RSSI should decrease logarithmically with the distance but remain far above the sensitivity, so no packet loss is expected at these distances unless obstacles add a significant attenuation.
+
+\subsubsection{Experimental setup}
+
+No dedicated firmware was used in this experiment: the boards ran the normal transmitter and receiver firmware (Sections~\ref{sec:tx} and~\ref{sec:rx}) with the configuration of Table~\ref{tab:lora-config}. The receiver was kept at a fixed position, connected to a laptop whose serial monitor logged every received packet together with its RSSI (\texttt{logs/rx\_qos.log}). The transmitter, also connected to a laptop that logged every sent packet (\texttt{logs/tx\_qos.log}), was carried away and stopped at approximately 1, 12, 27, 40, 57 and 65~m, where it kept sending a reading every 5~s. The transmitter was reset at each position, so the incremental \texttt{id} of the messages restarts from 0: lost packets appear as gaps in the received sequence, and comparing both logs gives the number of packets sent and received at each distance.
+
+The experiment was performed indoors, on the third floor of the university building. The receiver was placed next to the bathroom door beside the lift, and the transmitter was moved along the corridor up to the window at its end; the distances are approximate positions along this path. Several doors and columns stood between both nodes, so there was no direct line of sight. Between 8 and 10 packets were sent at each position. An additional measurement was taken about 60~m away and one floor below, at the bottom of a staircase, with several walls in between.
+
+
+\subsubsection{Results}
+
+Table~\ref{tab:qos-results} and Figure~\ref{fig:qos-results} summarise the results obtained by comparing both logs. The packets sent before the first reset were discarded. At the extra position, the receiver log ends after packet 5, so only packets 0--5 are considered there.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{@{}cccccc@{}}
+        \toprule
+        \textbf{Distance} & \textbf{Sent} & \textbf{Received} & \textbf{Loss} & \textbf{Avg.\ RSSI} & \textbf{RSSI range} \\
+        (m) & & & (\%) & (dBm) & (dBm) \\
+        \midrule
+        1  & 8  & 8  & 0    & $-39.0$ & $-57$ to $-31$ \\
+        12 & 8  & 8  & 0    & $-52.3$ & $-61$ to $-46$ \\
+        27 & 9  & 9  & 0    & $-63.2$ & $-71$ to $-53$ \\
+        40 & 9  & 9  & 0    & $-72.9$ & $-84$ to $-62$ \\
+        57 & 8  & 8  & 0    & $-73.5$ & $-85$ to $-65$ \\
+        65 & 10 & 10 & 0    & $-81.4$ & $-93$ to $-69$ \\
+        \midrule
+        60$^{\dagger}$ & 6 & 5 & 16.7 & $-88.8$ & $-92$ to $-87$ \\
+        \bottomrule
+    \end{tabular}
+    \caption{Packet loss and RSSI at different distances (SF7, 250~kHz, 20~dBm). $^{\dagger}$One floor below, behind several walls.}
+    \label{tab:qos-results}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=0.48\textwidth, height=5.5cm,
+            xlabel={Distance (m)}, ylabel={RSSI (dBm)},
+            xtick={1,12,27,40,57,65}, xmin=0, xmax=70, ymin=-130, ymax=-20,
+            grid=major, title={Signal strength},
+            legend pos=north east, legend style={font=\scriptsize}, legend cell align=left
+        ]
+            \addplot[mark=*, blue, error bars/.cd, y dir=both, y explicit] coordinates {
+                (1,-39.0)  += (0,8.0)  -= (0,18.0)
+                (12,-52.3) += (0,6.3)  -= (0,8.7)
+                (27,-63.2) += (0,10.2) -= (0,7.8)
+                (40,-72.9) += (0,10.9) -= (0,11.1)
+                (57,-73.5) += (0,8.5)  -= (0,11.5)
+                (65,-81.4) += (0,12.4) -= (0,11.6)
+            };
+            \addlegendentry{Corridor}
+            \addplot[only marks, mark=diamond*, red, error bars/.cd, y dir=both, y explicit] coordinates {
+                (60,-88.8) += (0,1.8) -= (0,3.2)
+            };
+            \addlegendentry{Floor below}
+            \addplot[gray, dashed, domain=1:65, samples=60] {-35.6 - 22.0*log10(x)};
+            \addlegendentry{Fit, $n = 2.2$}
+            \addplot[black, dashed, mark=none, forget plot] coordinates {(0,-121.5) (70,-121.5)}
+                node[pos=0.5, anchor=south, font=\scriptsize] {Sensitivity SF7/250~kHz};
+        \end{axis}
+    \end{tikzpicture}
+    \hfill
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=0.48\textwidth, height=5.5cm,
+            xlabel={Distance (m)}, ylabel={Packets received (\%)},
+            xtick={1,12,27,40,57,65}, xmin=0, xmax=70, ymin=0, ymax=105,
+            grid=major, title={Packet delivery}
+        ]
+            \addplot[mark=square*, blue] coordinates {
+                (1,100) (12,100) (27,100) (40,100) (57,100) (65,100)
+            };
+            \addplot[only marks, mark=diamond*, red] coordinates {(60,83.3)};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{RSSI (left) and percentage of received packets (right) as a function of the distance between the transmitter and the receiver. Error bars show the minimum and maximum RSSI at each position, the dashed grey line is the least-squares fit of Eq.~\eqref{eq:pathloss} and the red diamond is the extra position one floor below.}
+    \label{fig:qos-results}
+\end{figure}
+
+The RSSI decreased from $-39.0$~dBm at 1~m to $-81.4$~dBm at 65~m, although the spread at each position reached 15--26~dB and the averages at 40 and 57~m were almost equal. Applying Eq.~\eqref{eq:pathloss} between both points gives a path loss exponent of
+\begin{equation}
+    n = \frac{RSSI(1) - RSSI(65)}{10\log_{10}(65/1)} = \frac{42.4}{18.13} \approx 2.3,
+\end{equation}
+and a least-squares fit of the six positions gives $n = 2.2$ with $RSSI(1~\text{m}) = -35.6$~dBm (RMS error of 4.4~dB). This value is only slightly above free space ($n = 2$) and below the 2.7--4 typical of obstructed paths: the corridor probably guides part of the energy and compensates the attenuation of the doors and columns, whose effect appears mainly as the large fluctuations of $X_\sigma$.
+
+No packet was lost along the corridor (PDR of 100\,\% at every position), as expected: even the weakest packet ($-93$~dBm at 65~m) kept a margin of about 28~dB over the sensitivity of $-121.5$~dBm. The only loss occurred at the extra position one floor below, where the walls and the floor lowered the average RSSI to $-88.8$~dBm and one of six packets was lost. Since the received packets were still about 30~dB above the sensitivity, this loss is more likely due to a deep fade of that single packet or to interference than to the average path loss, although the small number of packets does not allow a statistically significant PDR estimate.
 
 \subsection{Discussion of the results}
 \tcmp{Análisis conjunto de los resultados.}
